@@ -193,5 +193,13 @@
       <!-- The check is suppressed in the next line of code after the comment -->
       <property name="influenceFormat" value="1"/>
     </module>
+    
+    <!-- checkstyle rules added by me: -->
+    <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+    <module name="MagicNumber">
+    	<property name = "ignoreNumbers" value = "-1, 0, 1"/>
+    	<property name = "ignoreHashCodeMethod" value = "true"/>
+   
   </module>
+  
 </module>
