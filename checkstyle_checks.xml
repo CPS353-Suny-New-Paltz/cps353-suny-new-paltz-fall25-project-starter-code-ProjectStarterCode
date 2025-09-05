@@ -193,5 +193,11 @@
       <!-- The check is suppressed in the next line of code after the comment -->
       <property name="influenceFormat" value="1"/>
     </module>
+    <module name="LeftCurly">
+      <property name="id" value="LeftCurlyNl"/>
+      <property name="option" value="nl"/>
+      <property name="tokens"
+                value="LITERAL_CASE, LITERAL_DEFAULT"/>
+    </module>
   </module>
 </module>
