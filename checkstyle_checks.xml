@@ -4,6 +4,27 @@
           "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
+          <!-- Tabs are forbidden; use spaces -->
+<module name="FileTabCharacter">
+  <property name="eachLine" value="true"/>
+</module>
+
+<!-- Enforce a newline at end of every file -->
+<module name="NewlineAtEndOfFile"/>
+
+<!-- Forbid trailing whitespace at line ends -->
+<module name="RegexpSingleline">
+  <property name="format" value="\s+$"/>
+  <property name="message" value="Trailing whitespace"/>
+  <property name="ignoreComments" value="true"/>
+</module>
+
+<!-- Keep lines reasonable length (adjust max if you prefer 120) -->
+<module name="LineLength">
+  <property name="max" value="100"/>
+  <property name="ignorePattern" value="^package|^import|http(s)?://"/>
+</module>
+
   <module name="SuppressWarningsFilter"/>
 
   <property name="charset" value="UTF-8"/>
@@ -24,6 +45,36 @@
   </module>
 
   <module name="TreeWalker">
+            <!-- Always use braces, even for one-line if/while/for -->
+<module name="NeedBraces"/>
+
+<!-- Put opening brace at end of the line: `if (…) {` -->
+<module name="LeftCurly">
+  <property name="option" value="eol"/>
+</module>
+
+<!-- Enforce spaces around operators, after keywords, etc. -->
+<module name="WhitespaceAround"/>
+
+<!-- No stray spaces before commas, semicolons, or brackets -->
+<module name="NoWhitespaceBefore"/>
+
+<!-- Basic 4-space indentation (matches most Java style guides) -->
+<module name="Indentation">
+  <property name="basicOffset" value="4"/>
+  <property name="braceAdjustment" value="0"/>
+  <property name="caseIndent" value="4"/>
+  <property name="tabWidth" value="4"/>
+</module>
+
+<!-- Naming: lowerCamelCase for methods, locals, and parameters -->
+<module name="MethodName"/>
+<module name="LocalVariableName"/>
+<module name="ParameterName"/>
+
+<!-- Optional but handy: order of modifiers like `public static final` -->
+<module name="ModifierOrder"/>
+
     <module name="OuterTypeFilename"/>
     <module name="IllegalTokenText">
       <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
