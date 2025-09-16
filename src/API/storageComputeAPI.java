@@ -2,6 +2,9 @@ package API;
 
 import java.util.List;
 
+import project.annotations.ProcessAPI;
+
+@ProcessAPI
 public interface storageComputeAPI {
 
 	List<Integer> read(String source);
