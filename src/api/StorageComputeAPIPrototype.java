@@ -5,11 +5,11 @@ package api;
 	import java.util.List;
 	import java.util.ArrayList;
 
-	public class storageComputeAPIPrototype implements storageComputeAPI {
+	public class StorageComputeAPIPrototype implements StorageComputeAPI {
 	    
 	    @ProcessAPIPrototype
-	    public static storageComputeAPI create() {
-	        return new storageComputeAPIPrototype();
+	    public static StorageComputeAPI create() {
+	        return new StorageComputeAPIPrototype();
 	    }
 	    
 	    @Override

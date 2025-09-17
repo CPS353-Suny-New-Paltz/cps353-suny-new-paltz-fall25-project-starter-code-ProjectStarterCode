@@ -5,7 +5,7 @@ import java.util.List;
 import project.annotations.ProcessAPI;
 
 @ProcessAPI
-public interface storageComputeAPI {
+public interface StorageComputeAPI {
 
 	List<Integer> read(String source);
 
