@@ -22,6 +22,12 @@
            default="checkstyle-suppressions.xml" />
     <property name="optional" value="true"/>
   </module>
+<!-- added in rule -->
+           <module name="SuppressionFilter">
+    <property name="file" value="${org.checkstyle.google.suppressionfilter.config}"
+           default="checkstyle-suppressions.xml" />
+    <property name="optional" value="true"/>
+  </module>
 
   <module name="TreeWalker">
     <module name="OuterTypeFilename"/>
