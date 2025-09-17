@@ -9,11 +9,11 @@ public class UserComputeAPIPrototype implements UserComputeAPI {
     private String delimiters;
     private static final String DEFAULT_DELIMITERS = ",;|";
     
-    @NetworkAPIPrototype
+    
     public UserComputeAPIPrototype() {
         // Constructor
     }
-    
+    @NetworkAPIPrototype
     @Override
     public String getInputSource() {
         return inputSource;
