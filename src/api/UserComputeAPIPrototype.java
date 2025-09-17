@@ -1,8 +1,6 @@
-package API;
+package api;
 
 import project.annotations.NetworkAPIPrototype;
-
-
 
 public class UserComputeAPIPrototype implements UserComputeAPI {
 
@@ -11,7 +9,7 @@ public class UserComputeAPIPrototype implements UserComputeAPI {
     private String delimiters;
     private static final String DEFAULT_DELIMITERS = ",;|";
     
-@NetworkAPIPrototype
+    @NetworkAPIPrototype
     public UserComputeAPIPrototype() {
         // Constructor
     }
