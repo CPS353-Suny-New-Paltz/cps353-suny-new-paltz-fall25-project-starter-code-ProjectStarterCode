@@ -1,15 +1,18 @@
 package api;
 
 
-	import project.annotations.ProcessAPIPrototype;
 	import java.util.List;
-	import java.util.ArrayList;
 
-	public class StorageComputeAPIPrototype implements StorageComputeAPI {
+import project.annotations.ProcessAPIPrototype;
+
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+
+	public class ProcessAPIProto implements StorageComputeAPI, ProcessAPIPrototype {
 	    
 	    @ProcessAPIPrototype
 	    public static StorageComputeAPI create() {
-	        return new StorageComputeAPIPrototype();
+	        return new ProcessAPIProto();
 	    }
 	    
 	    @Override
@@ -22,5 +25,11 @@ package api;
 	    public void write(String destination, List<Integer> data, String delimiters) {
 	        // Simple placeholder - does nothing
 	    }
+
+		@Override
+		public Class<? extends Annotation> annotationType() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
