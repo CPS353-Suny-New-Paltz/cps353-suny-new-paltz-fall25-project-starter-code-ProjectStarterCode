@@ -1,14 +1,36 @@
 package api;
 
+import project.annotations.ProcessAPIPrototype;
+
 public class StorageComputeAPIPrototype {
     
     @ProcessAPIPrototype
-    public int[] prototypeReadNumbers(String source) {
-        return new int[]{4};
+    public void prototypeDataOperations(StorageComputeAPI api) {
+        // Demonstrate the data flow for factorial computation
+        String source = "numbers.txt";
+        String destination = "factorials.txt";
+        String delimiter = "|";
+        
+        // Read input numbers that need factorial computation
+        int[] inputNumbers = api.readNumbers(source);
+        
+        // Compute factorials 
+        int[] factorialResults = new int[inputNumbers.length];
+        for (int i = 0; i < inputNumbers.length; i++) {
+            factorialResults[i] = computeFactorial(inputNumbers[i]);
+        }
+        
+        // Write the factorial results
+        api.writeResult(destination, factorialResults, delimiter);
     }
     
-    @ProcessAPIPrototype
-    public void prototypeWriteResult(String destination, int[] results, String delimiter) {
-        System.out.println("Writing results to: " + destination);
+    // Helper method to compute factorial 
+    private int computeFactorial(int number) {
+        if (number <= 1) return 1;
+        int result = 1;
+        for (int i = 2; i <= number; i++) {
+            result *= i;
+        }
+        return result;
     }
 }
