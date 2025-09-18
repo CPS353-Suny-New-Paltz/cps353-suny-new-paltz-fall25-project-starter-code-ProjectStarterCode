@@ -1,7 +1,5 @@
 package api;
 
-import project.annotations.NetworkAPIPrototype;
-
 public class UserComputeAPIPrototype {
     
     @NetworkAPIPrototype

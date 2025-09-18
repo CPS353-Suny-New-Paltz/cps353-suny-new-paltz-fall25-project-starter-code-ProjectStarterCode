@@ -1,7 +1,5 @@
 package api;
 
-import project.annotations.ConceptualAPIPrototype;
-
 public class ComputeEngineAPIPrototype {
     
     @ConceptualAPIPrototype

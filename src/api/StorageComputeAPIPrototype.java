@@ -1,7 +1,5 @@
 package api;
 
-import project.annotations.ProcessAPIPrototype;
-
 public class StorageComputeAPIPrototype {
     
     @ProcessAPIPrototype
