@@ -2,10 +2,11 @@ package api;
 
 import project.annotations.ConceptualAPIPrototype;
 
+
 public class ComputeEngineAPIPrototype {
     
-    @ConceptualAPIPrototype
-    public int[] prototypeFactorialComputations(ComputeEngineAPI api) {
+	@ConceptualAPIPrototype    
+    public void prototypeFactorialComputations(ComputeEngineAPI api) {
         // Simulate receiving numbers from data storage
         int[] numbersToCompute = {4, 5, 6}; 
         
@@ -15,6 +16,5 @@ public class ComputeEngineAPIPrototype {
             factorialResults[i] = api.computeFactorial(numbersToCompute[i]);
         }
         
-        return factorialResults;
     }
 }

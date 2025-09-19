@@ -17,22 +17,13 @@ public class StorageComputeAPIPrototype {
        
         int[] factorialResults = new int[inputNumbers.length];
         for (int i = 0; i < inputNumbers.length; i++) {
-            factorialResults[i] = computeFactorial(inputNumbers[i]);
+            factorialResults[i] = api.computeFactorial(inputNumbers[i]);
         }
         
         // Write the factorial results
         api.writeResult(destination, factorialResults, delimiter);
     }
     
-    // Helper method to compute factorial 
-    private int computeFactorial(int number) {
-        if (number <= 1) {
-        	return 1;
-        }
-        int result = 1;
-        for (int i = 2; i <= number; i++) {
-            result *= i;
-        }
-        return result;
-    }
+   
+    
 }
