@@ -1,26 +1,29 @@
 package api;
 
+import project.annotations.ProcessAPIPrototype;
 
-	import project.annotations.ProcessAPIPrototype;
-	import java.util.List;
-	import java.util.ArrayList;
-
-	public class StorageComputeAPIPrototype implements StorageComputeAPI {
-	    
-	    @ProcessAPIPrototype
-	    public static StorageComputeAPI create() {
-	        return new StorageComputeAPIPrototype();
-	    }
-	    
-	    @Override
-	    public List<Integer> read(String source) {
-	        // Simple placeholder - returns empty list
-	        return new ArrayList<>();
-	    }
-	    
-	    @Override
-	    public void write(String destination, List<Integer> data, String delimiters) {
-	        // Simple placeholder - does nothing
-	    }
-	}
-
+public class StorageComputeAPIPrototype {
+    
+    @ProcessAPIPrototype
+    public void prototypeDataOperations(StorageComputeAPI api) {
+        // Demonstrate the data flow for factorial computation
+        String source = "numbers.txt";
+        String destination = "factorials.txt";
+        String delimiter = "|";
+        
+        // Read input numbers that need factorial computation
+        int[] inputNumbers = api.readNumbers(source);
+        
+       
+        int[] factorialResults = new int[inputNumbers.length];
+        for (int i = 0; i < inputNumbers.length; i++) {
+            factorialResults[i] = api.computeFactorial(inputNumbers[i]);
+        }
+        
+        // Write the factorial results
+        api.writeResult(destination, factorialResults, delimiter);
+    }
+    
+   
+    
+}

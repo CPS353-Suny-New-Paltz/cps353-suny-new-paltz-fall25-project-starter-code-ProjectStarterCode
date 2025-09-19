@@ -1,31 +1,20 @@
 package api;
 
 import project.annotations.ConceptualAPIPrototype;
-import java.util.List;
-import java.util.ArrayList;
 
-public class ComputeEngineAPIPrototype implements ComputeEngineAPI {
+
+public class ComputeEngineAPIPrototype {
     
-    private List<Integer> currentData;
-    
-    @ConceptualAPIPrototype
-    public static ComputeEngineAPI create() {
-        return new ComputeEngineAPIPrototype();
-    }
-    
-    @Override
-    public void initialize(List<Integer> inputData) {
-        this.currentData = new ArrayList<>(inputData);
-    }
-    
-    @Override
-    public List<Integer> compute() {
-        // Simple computation placeholder - returns the same data
-        return new ArrayList<>(currentData);
-    }
-    
-    @Override
-    public void writeResult(String destination, String delimiters) {
-        // Placeholder for writing results
+	@ConceptualAPIPrototype    
+    public void prototypeFactorialComputations(ComputeEngineAPI api) {
+        // Simulate receiving numbers from data storage
+        int[] numbersToCompute = {4, 5, 6}; 
+        
+        // Use the API to compute factorials for each number
+        int[] factorialResults = new int[numbersToCompute.length];
+        for (int i = 0; i < numbersToCompute.length; i++) {
+            factorialResults[i] = api.computeFactorial(numbersToCompute[i]);
+        }
+        
     }
 }
