@@ -14,7 +14,7 @@ public class StorageComputeAPIPrototype {
         // Read input numbers that need factorial computation
         int[] inputNumbers = api.readNumbers(source);
         
-        // Compute factorials 
+       
         int[] factorialResults = new int[inputNumbers.length];
         for (int i = 0; i < inputNumbers.length; i++) {
             factorialResults[i] = computeFactorial(inputNumbers[i]);
@@ -26,7 +26,9 @@ public class StorageComputeAPIPrototype {
     
     // Helper method to compute factorial 
     private int computeFactorial(int number) {
-        if (number <= 1) return 1;
+        if (number <= 1) {
+        	return 1;
+        }
         int result = 1;
         for (int i = 2; i <= number; i++) {
             result *= i;
