@@ -2,22 +2,22 @@ package apiImplementations;
 
 import java.util.ArrayList;
 
-import process.api.DataBatch;
 import process.api.LoadRequest;
 import process.api.LoadResponse;
 import process.api.ProcessApi;
 import process.api.StoreRequest;
 import process.api.StoreResponse;
 import shared.stuff.ApiStatus;
+import shared.stuff.DataBatch;
 import shared.stuff.Resource;
 
 /**
  * Implementation of the ProcesskApi interface
  */
-public class ProcessAPI implements ProcessApi {
+public class ProcessAPI<T> implements ProcessApi {
 
   // need to know which resource for storing and loading data
-  private final Resource resource;
+  private Resource resource;
 
   private final DataBatch buffer; // A buffer if needed
 
@@ -25,18 +25,29 @@ public class ProcessAPI implements ProcessApi {
     this.resource = resource;
 
     // example buffer
-    this.buffer = new DataBatch<ArrayList<Integer>>(new ArrayList<Integer>());
+    this.buffer = new DataBatch<ArrayList<T>>(new ArrayList<T>());
   }
 
   @Override
-  public LoadResponse load(LoadRequest request) {
+  public LoadResponse<T> load(LoadRequest request) {
     // empty implementation returning failure and no data
-    return new LoadResponse(ApiStatus.ERROR, buffer, null);
+    return new LoadResponse<T>(ApiStatus.ERROR, buffer, "Not Implemented");
   }
 
   @Override
   public StoreResponse store(StoreRequest request) {
-    return new StoreResponse(ApiStatus.ERROR);
+    return new StoreResponse(ApiStatus.ERROR, "Not Implemented");
+  }
+
+  public Resource getResource() {
+    return resource;
+  }
+  public DataBatch getBuffer() {
+    return buffer;
+  }
+
+  public void setResource(Resource resource) {
+    this.resource = resource;
   }
 
 }

@@ -2,7 +2,6 @@ package apiImplementations;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import conceptual.api.ConceptualApi;
 import conceptual.api.Job;
@@ -16,7 +15,7 @@ import conceptual.api.JobStatus;
 public class ConceptualAPI<T> implements ConceptualApi {
 
   // Tracks submitted jobs jobId -> Job instance
-  private Map<String, Job<?>> jobRegistry;
+  private Map<String, Job<T>> jobRegistry;
 
   // Tracks status of each job jobId -> JobStatus
   private Map<String, JobStatus> jobStatuses;
@@ -27,15 +26,15 @@ public class ConceptualAPI<T> implements ConceptualApi {
   }
 
   @Override
-  public JobResponse<T> submitJob(JobRequest request) {
+  // paramaritized JobResponse just for testing purposes
+  public JobResponse<String> submitJob(JobRequest request) {
 
-    return new JobResponse<T>(UUID.randomUUID().toString(), JobStatus.FAILED,
-        null);
+    return new JobResponse<String>(request.getJob().getJobId(),
+        JobStatus.FAILED, "TestResult");
   }
 
   @Override
   public JobResponse<T> checkStatus(String jobId) {
-    return new JobResponse<T>(UUID.randomUUID().toString(), JobStatus.FAILED,
-        null, null);
+    return new JobResponse<T>(jobId, JobStatus.FAILED, null, "Not Implemented");
   }
 }
