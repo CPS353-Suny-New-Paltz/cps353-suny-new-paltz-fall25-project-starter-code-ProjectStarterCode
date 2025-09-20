@@ -1,12 +1,12 @@
-package process.api;
+package shared.stuff;
 
 /**
- * Generic wrapper for a batch of data. Can hold any data source (List, Set,
- * Stream, etc.).
+ * Generic wrapper for some data. Can hold any data source (List, Set, Stream,
+ * String etc.).
  */
 public class DataBatch<T> {
 
-  private final T dataSource;
+  private T dataSource;
 
   /**
    * @param dataSource
@@ -15,9 +15,15 @@ public class DataBatch<T> {
   public DataBatch(T dataSource) {
     this.dataSource = dataSource;
   }
+  public DataBatch() {
+    this.dataSource = null;
+  }
 
   public T getDataSource() {
     return this.dataSource;
+  }
+  public void setDataSource(T data) {
+    this.dataSource = data;
   }
 
 }

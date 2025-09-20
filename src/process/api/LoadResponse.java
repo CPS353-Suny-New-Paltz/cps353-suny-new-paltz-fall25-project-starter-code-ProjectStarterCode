@@ -1,6 +1,7 @@
 package process.api;
 
 import shared.stuff.ApiStatus;
+import shared.stuff.DataBatch;
 
 public class LoadResponse<T> {
 

@@ -24,6 +24,10 @@ public final class LoginResponse {
   public String getUserId() {
     return userId;
   }
+  public ApiStatus getStatus() {
+
+    return status;
+  }
 
   /**
    * Returns true is status is SUCCESS
@@ -33,4 +37,5 @@ public final class LoginResponse {
   public boolean success() {
     return status == ApiStatus.SUCCESS;
   }
+
 }

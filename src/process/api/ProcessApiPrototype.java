@@ -3,6 +3,7 @@ package process.api;
 import java.util.ArrayList;
 
 import project.annotations.ProcessAPIPrototype;
+import shared.stuff.DataBatch;
 import shared.stuff.Resource;
 import shared.stuff.ResourceType;
 

@@ -7,7 +7,7 @@ import shared.stuff.ApiStatus;
  */
 public final class LogoutResponse {
 
-  ApiStatus status;
+  private final ApiStatus status;
 
   public LogoutResponse(ApiStatus status) {
     this.status = status;
@@ -15,5 +15,9 @@ public final class LogoutResponse {
 
   public boolean success() {
     return this.status == ApiStatus.SUCCESS;
+  }
+
+  public ApiStatus getStatus() {
+    return status;
   }
 }

@@ -2,7 +2,7 @@ package process.api;
 
 import shared.stuff.ApiStatus;
 
-public class StoreResponse<T> {
+public class StoreResponse {
 
   private final ApiStatus status;
   private final String message;

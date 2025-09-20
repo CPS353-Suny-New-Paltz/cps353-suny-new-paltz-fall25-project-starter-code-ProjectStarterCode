@@ -1,5 +1,6 @@
 package process.api;
 
+import shared.stuff.DataBatch;
 import shared.stuff.Resource;
 
 /**
