@@ -1,19 +1,33 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
+// ---- Gradle build (Java + Eclipse, no Checkstyle) ----
+plugins {
+    id 'java'
+    id 'eclipse'
+}
 
-eclipse.project.name = 'FillThisIn' 
+// Give the Eclipse project a friendly name (NOT a file path)
+eclipse {
+    project {
+        name = 'project-starter-code-jtiripicchio-prog'
+    }
+    classpath {
+        // Ensure Eclipse sees test runtime jars (JUnit platform launcher, engines, etc.)
+        plusConfigurations += [ configurations.testRuntimeClasspath ]
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
 
+// Use Java 21; switch to 17 if your course requires it
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// Your folder layout: src/ for main code, test/ for tests
 sourceSets {
-	main {
-	  java {
-		srcDirs = ['src']
-	  }
-	}
-	test {
-	  java {
-	     srcDirs = ['test']
-	  }
-	 }
+    main { java { srcDirs = ['src'] } }
+    test { java { srcDirs = ['test'] } }
 }
 
 repositories {
@@ -21,9 +35,13 @@ repositories {
 }
 
 dependencies {
-    testImplementation('org.junit.jupiter:junit-jupiter:5.10.2')
-	testImplementation('org.mockito:mockito-core:5.10.0')
-	implementation('com.google.code.gson:gson:2.13.1')
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly  'org.junit.platform:junit-platform-launcher:1.10.2'
+
+    // Your other libs
+    testImplementation 'org.mockito:mockito-core:5.10.0'
+    implementation    'com.google.code.gson:gson:2.10.1'  // stable Gson version
 }
 
 test {
