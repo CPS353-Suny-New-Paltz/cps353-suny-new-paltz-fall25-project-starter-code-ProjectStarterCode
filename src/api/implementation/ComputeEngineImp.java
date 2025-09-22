@@ -9,9 +9,10 @@ public class ComputeEngineImp implements ComputeEngineAPI {
         //no initialization needed for empty implementation
     }
     
-    @Override
-    public int computeFactorial(int number) {
-        
-        return -1; // Using -1 as failure indicator
-    }
+
+	@Override
+	public int[] computeFactorial(int[] numbers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

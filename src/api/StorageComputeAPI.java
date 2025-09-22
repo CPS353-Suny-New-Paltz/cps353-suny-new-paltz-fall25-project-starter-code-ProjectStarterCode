@@ -6,5 +6,5 @@ import project.annotations.ProcessAPI;
 public interface StorageComputeAPI {
     int[] readNumbers(String source);
     void writeResult(String destination, int[] results, String delimiter);
-	int computeFactorial(int i);
+    int[] computeFactorial(int[] numbers);
 }

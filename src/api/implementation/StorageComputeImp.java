@@ -18,12 +18,12 @@ public class StorageComputeImp implements StorageComputeAPI {
     }
     
     @Override
-    public int computeFactorial(int number) {
+    public int[] computeFactorial(int[] number) {
         
         if (computeEngine != null) {
             return computeEngine.computeFactorial(number);
         }
-        return -1; // Failure value if dependency not available
+        return null; // Failure value if dependency not available
     }
     
     @Override

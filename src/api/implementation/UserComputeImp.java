@@ -21,12 +21,13 @@ public class UserComputeImp implements UserComputeAPI {
         try {
             // Simulate the workflow 
             int[] numbers = storageCompute.readNumbers(inputSource);
-            for (int number : numbers) {
-                storageCompute.computeFactorial(number);
-            }
-            storageCompute.writeResult(outputDestination, new int[0], delimiter);
             
-            return "SUCCESS: Factorial computation initiated";
+            // Corrected: Compute factorials for all numbers at once
+            int[] factorialResults = storageCompute.computeFactorial(numbers);
+            
+            storageCompute.writeResult(outputDestination, factorialResults, delimiter);
+            
+            return "SUCCESS: Factorial computation completed";
         } catch (Exception e) {
             return "ERROR: " + e.getMessage();
         }

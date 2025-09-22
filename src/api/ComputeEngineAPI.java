@@ -4,7 +4,5 @@ import project.annotations.ConceptualAPI;
 
 @ConceptualAPI
 public interface ComputeEngineAPI {
-    int computeFactorial(int number);
-
-
+    int[] computeFactorial(int[] numbers);
 }
