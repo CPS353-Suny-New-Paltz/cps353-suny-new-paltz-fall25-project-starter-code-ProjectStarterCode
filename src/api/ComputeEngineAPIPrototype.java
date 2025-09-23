@@ -2,6 +2,7 @@ package api;
 
 import project.annotations.ConceptualAPIPrototype;
 
+
 public class ComputeEngineAPIPrototype {
     
     @ConceptualAPIPrototype    
@@ -11,6 +12,6 @@ public class ComputeEngineAPIPrototype {
         
         // Use the API to compute factorials for all numbers at once
         int[] factorialResults = api.computeFactorial(numbersToCompute);
-        
+
     }
 }

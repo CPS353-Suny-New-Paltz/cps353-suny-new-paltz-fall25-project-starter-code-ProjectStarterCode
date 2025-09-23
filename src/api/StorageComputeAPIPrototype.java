@@ -14,10 +14,13 @@ public class StorageComputeAPIPrototype {
         // Read input numbers that need factorial computation
         int[] inputNumbers = api.readNumbers(source);
         
+
         // Compute factorials for all numbers at once
         int[] factorialResults = api.computeFactorial(inputNumbers);
+
         
         // Write the factorial results
         api.writeResult(destination, factorialResults, delimiter);
     }
+
 }
