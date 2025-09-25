@@ -19,8 +19,8 @@ public class UserComputeImp implements UserComputeAPI {
         
         try {
             int[] numbers = storageCompute.readNumbers(inputSource);
-            String[] factorialResults = storageCompute.computeFactorial(numbers); // Now String[]
-            storageCompute.writeResult(outputDestination, factorialResults, delimiter); // Now String[]
+            String[] factorialResults = storageCompute.computeFactorial(numbers);
+            storageCompute.writeResult(outputDestination, factorialResults, delimiter);
             
             return "SUCCESS: Factorial computation completed";
         } catch (Exception e) {

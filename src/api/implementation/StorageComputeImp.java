@@ -1,7 +1,7 @@
 package api.implementation;
 
 import api.StorageComputeAPI;
-import api.ComputeEngineAPI; // Dependency from system design
+import api.ComputeEngineAPI;
 
 public class StorageComputeImp implements StorageComputeAPI {
     
@@ -13,26 +13,24 @@ public class StorageComputeImp implements StorageComputeAPI {
     
     @Override
     public int[] readNumbers(String source) {
-        // return empty array
-        return new int[0];
+        // Simple implementation - just return test data
+        return new int[]{1, 10, 25};
     }
     
     @Override
-    public String[] computeFactorial(int[] number) {
-        
-        if (computeEngine != null) {
-            return computeEngine.computeFactorial(number);
+    public String[] computeFactorial(int[] numbers) {
+        if (computeEngine == null) {
+            throw new IllegalStateException("ComputeEngine not available");
         }
-        return null; // Failure value if dependency not available
+        return computeEngine.computeFactorial(numbers);
     }
     
-    public void writeResult(String destination, int[] results, String delimiter) {
-       
+    @Override
+    public void writeResult(String destination, String[] results, String delimiter) {
+        // Simple implementation - just print to console
+        System.out.println("Writing results to: " + destination);
+        for (String result : results) {
+            System.out.println(result);
+        }
     }
-
-	@Override
-	public void writeResult(String destination, String[] results, String delimiter) {
-		// TODO Auto-generated method stub
-		
-	}
 }
