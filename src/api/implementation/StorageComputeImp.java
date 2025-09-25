@@ -18,7 +18,7 @@ public class StorageComputeImp implements StorageComputeAPI {
     }
     
     @Override
-    public int[] computeFactorial(int[] number) {
+    public String[] computeFactorial(int[] number) {
         
         if (computeEngine != null) {
             return computeEngine.computeFactorial(number);
@@ -26,8 +26,13 @@ public class StorageComputeImp implements StorageComputeAPI {
         return null; // Failure value if dependency not available
     }
     
-    @Override
     public void writeResult(String destination, int[] results, String delimiter) {
        
     }
+
+	@Override
+	public void writeResult(String destination, String[] results, String delimiter) {
+		// TODO Auto-generated method stub
+		
+	}
 }

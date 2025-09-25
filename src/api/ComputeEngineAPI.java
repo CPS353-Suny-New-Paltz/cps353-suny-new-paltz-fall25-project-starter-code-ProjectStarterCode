@@ -4,5 +4,5 @@ import project.annotations.ConceptualAPI;
 
 @ConceptualAPI
 public interface ComputeEngineAPI {
-    int[] computeFactorial(int[] numbers);
+    String[] computeFactorial(int[] numbers); // Return factorial results as strings
 }

@@ -1,7 +1,7 @@
 package api.implementation;
 
 import api.UserComputeAPI;
-import api.StorageComputeAPI; // Dependency from system design
+import api.StorageComputeAPI;
 
 public class UserComputeImp implements UserComputeAPI {
     
@@ -13,19 +13,14 @@ public class UserComputeImp implements UserComputeAPI {
     
     @Override
     public String computeFactorial(String inputSource, String outputDestination, String delimiter) {
-        // return failure message
         if (storageCompute == null) {
             return "ERROR: StorageCompute service not available";
         }
         
         try {
-            // Simulate the workflow 
             int[] numbers = storageCompute.readNumbers(inputSource);
-            
-            // Corrected: Compute factorials for all numbers at once
-            int[] factorialResults = storageCompute.computeFactorial(numbers);
-            
-            storageCompute.writeResult(outputDestination, factorialResults, delimiter);
+            String[] factorialResults = storageCompute.computeFactorial(numbers); // Now String[]
+            storageCompute.writeResult(outputDestination, factorialResults, delimiter); // Now String[]
             
             return "SUCCESS: Factorial computation completed";
         } catch (Exception e) {

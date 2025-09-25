@@ -6,11 +6,8 @@ public class ComputeEngineAPIPrototype {
     
     @ConceptualAPIPrototype    
     public void prototypeFactorialComputations(ComputeEngineAPI api) {
-        // Simulate receiving numbers from data storage
-        int[] numbersToCompute = {1, 10, 25}; 
+        int[] numbersToCompute = {1, 10, 25, 50, 100}; // Now supports much larger numbers
         
-        // Use the API to compute factorials for all numbers at once
-        int[] factorialResults = api.computeFactorial(numbersToCompute);
-        
+        String[] factorialResults = api.computeFactorial(numbersToCompute);
     }
 }
