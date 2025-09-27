@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import network.api.Delimiter;
-import network.api.LoadDataRequest;
-import network.api.LoadDataResponse;
-import network.api.StoreDataRequest;
-import network.api.StoreDataResponse;
 import process.api.LoadRequest;
 import process.api.LoadResponse;
 import process.api.ProcessApi;
@@ -32,39 +28,8 @@ public class InMemoryDataStore implements ProcessApi {
     this.resource = new Resource(ResourceType.CUSTOM, input);
   }
 
-  /**
-   * This function stores date in the TestOutputConfig specified in the users
-   * request. It splits the user provided data based on the specified delimiter
-   * or the default delimiter then adds it to TestOutputConfig as individual
-   * elements
-   */
-  public StoreDataResponse storeData(StoreDataRequest req) {
-
-    Delimiter delimiter;
-    if (req.getDelimiter() == null) {
-      delimiter = defaultDelimiter;
-    } else {
-      delimiter = req.getDelimiter();
-    }
-
-    List payloadStr = req.getPayload();
-
-    // Clear old output and write new data
-    outputConfig.setOutputData(new java.util.ArrayList<>());
-
-    List out = new TestOutputConfig().getOutputData();
-
-    return new StoreDataResponse(ApiStatus.SUCCESS, resource,
-        "Data stored successfully");
-  }
-
-  /**
-   * This function reads data, in this case from TestInputConfig which is stored
-   * in the resource field. It then separates each using the specified delimiter
-   * and returns it to the user as an array of bytes
-   */
-  public LoadDataResponse loadData(LoadDataRequest req) {
-
+  @Override
+  public LoadResponse load(LoadRequest req) {
     Delimiter delimiter;
     if (req.getDelimiter() == null) {
       delimiter = defaultDelimiter;
@@ -90,20 +55,27 @@ public class InMemoryDataStore implements ProcessApi {
 
     // return the byte[], no resource is needed because we would read from user
     // supplied resource
-    return new LoadDataResponse(ApiStatus.SUCCESS, data, delimiter,
+    return new LoadResponse(ApiStatus.SUCCESS, data,
         "Data loaded successfully");
   }
 
   @Override
-  public LoadResponse load(LoadRequest request) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  public StoreResponse store(StoreRequest req) {
+    Delimiter delimiter;
+    if (req.getDelimiter() == null) {
+      delimiter = defaultDelimiter;
+    } else {
+      delimiter = req.getDelimiter();
+    }
 
-  @Override
-  public StoreResponse store(StoreRequest request) {
-    // TODO Auto-generated method stub
-    return null;
+    List payloadStr = req.getData();
+
+    // Clear old output and write new data
+    outputConfig.setOutputData(new java.util.ArrayList<>());
+
+    List out = new TestOutputConfig().getOutputData();
+
+    return new StoreResponse(ApiStatus.SUCCESS, "Data stored successfully");
   }
 
 }
