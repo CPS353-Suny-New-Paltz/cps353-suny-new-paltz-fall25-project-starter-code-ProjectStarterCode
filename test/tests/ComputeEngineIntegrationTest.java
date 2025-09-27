@@ -9,6 +9,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import api.implementations.ConceptualAPI;
+import api.implementations.NetworkAPI;
+import conceptual.api.ConceptualApi;
 import network.api.Delimiter;
 import network.api.LoadDataRequest;
 import network.api.LoadDataResponse;
@@ -30,6 +33,9 @@ public class ComputeEngineIntegrationTest {
     inputConfig = new TestInputConfig(Arrays.asList(1, 10, 25));
     outputConfig = new TestOutputConfig();
     dataStore = new InMemoryDataStore(inputConfig, outputConfig);
+
+    NetworkAPI net = new NetworkAPI();
+    ConceptualApi con = new ConceptualAPI();
   }
 
   @Test
