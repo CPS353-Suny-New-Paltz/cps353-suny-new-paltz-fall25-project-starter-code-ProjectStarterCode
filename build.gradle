@@ -29,9 +29,4 @@ dependencies {
 
 test {
     useJUnitPlatform()
-<<<<<<< HEAD
-    
 }
-=======
-}
->>>>>>> upstream/checkpoint-3-tests
