@@ -57,6 +57,7 @@ public class InMemoryDataStore implements NetworkApi {
     List out = new TestOutputConfig().getOutputData();
 
     return new StoreDataResponse(ApiStatus.SUCCESS, resource,
+
         "Data stored successfully");
   }
 
@@ -88,6 +89,7 @@ public class InMemoryDataStore implements NetworkApi {
     }
 
     // create byte array out of our string builder
+
     List<String> data = new ArrayList<String>();
     data.add(builder.toString());
 
