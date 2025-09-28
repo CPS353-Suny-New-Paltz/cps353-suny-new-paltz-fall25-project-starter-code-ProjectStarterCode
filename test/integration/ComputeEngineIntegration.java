@@ -6,30 +6,23 @@ import api.implementation.ComputeEngineImp;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.util.List;
-import java.util.Arrays;
 
-/**
- * Integration test for compute engine components using test-only data store.
- */
-public class ComputeEngineIntegration {
+class ComputeEngineIntegration {
 
     @Test
     void integrationTestWithRealImplementations() {
         // Setup: Use real implementations (no mocks)
         ComputeEngineImp computeEngine = new ComputeEngineImp();
-        StorageComputeIntegration testDataStore = new StorageComputeIntegration(computeEngine);
+        StorageComputeImp storageCompute = new StorageComputeImp(computeEngine);
+        StorageComputeIntegration testDataStore = new StorageComputeIntegration();
         
         // Configure test data store with input [1,10,25]
         testDataStore.addTestFile("input.txt", new int[]{1, 10, 25});
         
-        // Execute: Use StorageComputeImp with test data store
-        StorageComputeImp storageCompute = new StorageComputeImp(testDataStore);
-        
-        // Perform the complete workflow
-        int[] numbers = storageCompute.readNumbers("input.txt");
+        // Execute the complete workflow using the test data store
+        int[] numbers = testDataStore.readNumbers("input.txt");
         String[] results = storageCompute.computeFactorial(numbers);
-        storageCompute.writeResult("output.txt", results, ""); // No delimiter specified
+        testDataStore.writeResult("output.txt", results, ""); // No delimiter specified
         
         // Validation: Check what was written to output
         String[] writtenResults = testDataStore.getWrittenResults("output.txt");
