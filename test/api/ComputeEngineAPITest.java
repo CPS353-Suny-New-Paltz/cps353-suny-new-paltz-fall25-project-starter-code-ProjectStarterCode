@@ -2,7 +2,7 @@ package test.api;
 
 import api.ComputeEngineAPI;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 public class ComputeEngineAPITest {
     

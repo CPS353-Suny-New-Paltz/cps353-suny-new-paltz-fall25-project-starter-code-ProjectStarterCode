@@ -13,8 +13,8 @@ public class StorageComputeImp implements StorageComputeAPI {
     
     @Override
     public int[] readNumbers(String source) {
-        // Simple implementation - just return test data
-        return new int[]{1, 10, 25};
+        // Empty implementation for now
+        return new int[0];
     }
     
     @Override
@@ -27,10 +27,6 @@ public class StorageComputeImp implements StorageComputeAPI {
     
     @Override
     public void writeResult(String destination, String[] results, String delimiter) {
-        // Simple implementation - just print to console
-        System.out.println("Writing results to: " + destination);
-        for (String result : results) {
-            System.out.println(result);
-        }
+        // Empty implementation for now
     }
 }

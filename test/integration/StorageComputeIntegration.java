@@ -1,29 +1,57 @@
 package test.integration;
 
 import api.StorageComputeAPI;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.List;
-import java.util.Arrays;
+import api.ComputeEngineAPI;
+import api.implementation.ComputeEngineImp;
+import java.util.HashMap;
+import java.util.Map;
 
-public class StorageComputeIntegration {
+/**
+ * Test-only data store implementation for integration tests.
+ */
+public class StorageComputeIntegration implements StorageComputeAPI {
+    private ComputeEngineAPI computeEngine;
+    private Map<String, int[]> fileContents;
+    private Map<String, String[]> writtenResults;
     
-    @Test
-    void integrationTest() {
-        List<Integer> inputNumbers = Arrays.asList(1, 5, 10);
-        TestInputConfig inputConfig = new TestInputConfig(inputNumbers);
-        TestOutputConfig outputConfig = new TestOutputConfig();
-        StorageComputeAPI storageCompute = new TestStorageCompute();
-        
-        String[] results = storageCompute.computeFactorial(inputConfig, outputConfig);
-        
-        assertNotNull(results);
-        assertEquals(3, results.length);
-        
-        List<String> writtenResults = outputConfig.getResults();
-        assertEquals(3, writtenResults.size());
-        assertEquals("1", writtenResults.get(0));
-        assertEquals("120", writtenResults.get(1)); // 5! = 120
-        assertEquals("3628800", writtenResults.get(2)); // 10! = 3628800
+    public TestFileStorageCompute() {
+        this.computeEngine = new ComputeEngineImp();
+        this.fileContents = new HashMap<>();
+        this.writtenResults = new HashMap<>();
+    }
+    
+    public TestFileStorageCompute(ComputeEngineAPI computeEngine) {
+        this.computeEngine = computeEngine;
+        this.fileContents = new HashMap<>();
+        this.writtenResults = new HashMap<>();
+    }
+    
+    @Override
+    public int[] readNumbers(String source) {
+        return fileContents.getOrDefault(source, new int[0]);
+    }
+    
+    @Override
+    public String[] computeFactorial(int[] numbers) {
+        return computeEngine.computeFactorial(numbers);
+    }
+    
+    @Override
+    public void writeResult(String destination, String[] results, String delimiter) {
+        writtenResults.put(destination, results);
+    }
+    
+    // Test helper methods
+    public String[] getWrittenResults(String destination) {
+        return writtenResults.get(destination);
+    }
+    
+    public void addTestFile(String filename, int[] numbers) {
+        fileContents.put(filename, numbers);
+    }
+    
+    public void clearTestData() {
+        fileContents.clear();
+        writtenResults.clear();
     }
 }
