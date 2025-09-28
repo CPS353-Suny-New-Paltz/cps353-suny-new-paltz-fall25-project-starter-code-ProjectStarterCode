@@ -1,6 +1,6 @@
 package api;
 
 public interface OutputConfig {
-	void writeResult(String[] results, String delimiter);
+	void writeResults(String[] results, String delimiter);
 
 }
