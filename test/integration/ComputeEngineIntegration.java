@@ -12,13 +12,13 @@ import java.util.Arrays;
 /**
  * Integration test for compute engine components using test-only data store.
  */
-class ComputeEngineIntegration {
+public class ComputeEngineIntegration {
 
     @Test
     void integrationTestWithRealImplementations() {
         // Setup: Use real implementations (no mocks)
         ComputeEngineImp computeEngine = new ComputeEngineImp();
-        TestFileStorageCompute testDataStore = new TestFileStorageCompute(computeEngine);
+        StorageComputeIntegration testDataStore = new StorageComputeIntegration(computeEngine);
         
         // Configure test data store with input [1,10,25]
         testDataStore.addTestFile("input.txt", new int[]{1, 10, 25});
