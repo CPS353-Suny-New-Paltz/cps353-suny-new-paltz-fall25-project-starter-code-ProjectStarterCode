@@ -1,6 +1,7 @@
 package api.implementation;
 
 import api.ComputeEngineAPI;
+import java.math.BigInteger;
 
 public class ComputeEngineImp implements ComputeEngineAPI {
     
@@ -19,11 +20,12 @@ public class ComputeEngineImp implements ComputeEngineAPI {
         if (n < 0) {
             throw new IllegalArgumentException("Factorial not defined for negative numbers: " + n);
         }
-        if (n == 0 || n == 1) {
-            return "1";
-        }
         
-        // Simple implementation for smoke test - just return placeholder
-        return "factorial-of-" + n;
+        
+        BigInteger result = BigInteger.ONE;
+        for (int i = 2; i <= n; i++) {
+            result = result.multiply(BigInteger.valueOf(i));
+        }
+        return result.toString();
     }
 }
