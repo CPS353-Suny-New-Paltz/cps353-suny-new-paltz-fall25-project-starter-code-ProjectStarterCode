@@ -14,13 +14,13 @@ public class StorageComputeIntegration implements StorageComputeAPI {
     private Map<String, int[]> fileContents;
     private Map<String, String[]> writtenResults;
     
-    public TestFileStorageCompute() {
+    public StorageComputeIntegration() {
         this.computeEngine = new ComputeEngineImp();
         this.fileContents = new HashMap<>();
         this.writtenResults = new HashMap<>();
     }
     
-    public TestFileStorageCompute(ComputeEngineAPI computeEngine) {
+    public StorageComputeIntegration(ComputeEngineAPI computeEngine) {
         this.computeEngine = computeEngine;
         this.fileContents = new HashMap<>();
         this.writtenResults = new HashMap<>();
