@@ -5,7 +5,9 @@
 
 <module name="Checker">
   <module name="SuppressWarningsFilter"/>
-
+  <module name="LineLength"> 
+        <property name="max" value="100"/>
+    </module>
   <property name="charset" value="UTF-8"/>
 
   <property name="severity" value="warning"/>
