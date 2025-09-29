@@ -2,18 +2,17 @@ package tests;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import network.api.Delimiter;
 import network.api.LoadDataRequest;
 import network.api.LoadDataResponse;
-import network.api.LoginRequest;
-import network.api.LoginResponse;
-import network.api.LogoutRequest;
-import network.api.LogoutResponse;
-import network.api.NetworkApi;
 import network.api.StoreDataRequest;
 import network.api.StoreDataResponse;
+import process.api.LoadRequest;
+import process.api.LoadResponse;
+import process.api.ProcessApi;
+import process.api.StoreRequest;
+import process.api.StoreResponse;
 import shared.stuff.ApiStatus;
 import shared.stuff.Resource;
 import shared.stuff.ResourceType;
@@ -22,7 +21,7 @@ import shared.stuff.ResourceType;
  * A simple in-memory implementation of NetworkApi for testing, using
  * TestInputConfig and TestOutputConfig for storage
  */
-public class InMemoryDataStore implements NetworkApi {
+public class InMemoryDataStore implements ProcessApi {
 
   TestOutputConfig outputConfig;
   Delimiter defaultDelimiter = Delimiter.defaultDelimiter();
@@ -39,7 +38,6 @@ public class InMemoryDataStore implements NetworkApi {
    * or the default delimiter then adds it to TestOutputConfig as individual
    * elements
    */
-  @Override
   public StoreDataResponse storeData(StoreDataRequest req) {
 
     Delimiter delimiter;
@@ -57,6 +55,7 @@ public class InMemoryDataStore implements NetworkApi {
     List out = new TestOutputConfig().getOutputData();
 
     return new StoreDataResponse(ApiStatus.SUCCESS, resource,
+
         "Data stored successfully");
   }
 
@@ -65,7 +64,6 @@ public class InMemoryDataStore implements NetworkApi {
    * in the resource field. It then separates each using the specified delimiter
    * and returns it to the user as an array of bytes
    */
-  @Override
   public LoadDataResponse loadData(LoadDataRequest req) {
 
     Delimiter delimiter;
@@ -88,6 +86,7 @@ public class InMemoryDataStore implements NetworkApi {
     }
 
     // create byte array out of our string builder
+
     List<String> data = new ArrayList<String>();
     data.add(builder.toString());
 
@@ -97,16 +96,16 @@ public class InMemoryDataStore implements NetworkApi {
         "Data loaded successfully");
   }
 
-  // Unchanged NetworkApi methods
   @Override
-  public LoginResponse login(LoginRequest req) {
-    return new LoginResponse(UUID.randomUUID().toString(),
-        UUID.randomUUID().toString(), ApiStatus.ERROR);
+  public LoadResponse load(LoadRequest request) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override
-  public LogoutResponse logout(LogoutRequest req) {
-    return new LogoutResponse(ApiStatus.ERROR);
+  public StoreResponse store(StoreRequest request) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

@@ -9,11 +9,15 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
+import api.implementations.ConceptualAPI;
+import api.implementations.NetworkAPI;
+import conceptual.api.ConceptualApi;
 import network.api.Delimiter;
-import network.api.LoadDataRequest;
-import network.api.LoadDataResponse;
-import network.api.StoreDataRequest;
-import network.api.StoreDataResponse;
+import process.api.LoadRequest;
+import process.api.LoadResponse;
+import process.api.StoreRequest;
+import process.api.StoreResponse;
 import shared.stuff.ApiStatus;
 import shared.stuff.Resource;
 import shared.stuff.ResourceType;
@@ -30,19 +34,27 @@ public class ComputeEngineIntegrationTest {
     inputConfig = new TestInputConfig(Arrays.asList(1, 10, 25));
     outputConfig = new TestOutputConfig();
     dataStore = new InMemoryDataStore(inputConfig, outputConfig);
+
+
+    NetworkAPI net = new NetworkAPI();
+    ConceptualApi con = new ConceptualAPI();
   }
 
   @Test
   void testComputeEngineIntegration() {
 
     // Simulate loading data
-    LoadDataRequest loadReq = new LoadDataRequest(UUID.randomUUID().toString(),
-        dataStore.resource); // no delimiter specified
-    LoadDataResponse loadResp = dataStore.loadData(loadReq);
+
+    LoadRequest loadReq = new LoadRequest(dataStore.resource,
+        Delimiter.defaultDelimiter());
+    LoadResponse loadResp = dataStore.load(loadReq);
 
     // Verify that loaded data matches inputConfig
-    List loadedData = loadResp.getPayload();
+
+    List loadedData = loadResp.getData();
+
     String result = (String) loadedData.get(0);
+
     String expectedString = "1" + Delimiter.defaultDelimiter().getValue() + "10"
         + Delimiter.defaultDelimiter().getValue() + "25";
 
@@ -50,7 +62,10 @@ public class ComputeEngineIntegrationTest {
     // sure what the ConceptualAPI / computation section of compute engine will
     // even do. May have to rework entire ConceptualAPI later, I had almsot no
     // idea what its supposed to do
+
+
     assertEquals(expectedString, result);
+
 
     //
     // Simulate storing processed data
@@ -59,12 +74,11 @@ public class ComputeEngineIntegrationTest {
     Resource<TestOutputConfig> outputSource = new Resource(ResourceType.CUSTOM,
         dataStore.outputConfig);
 
-    StoreDataRequest storeReq = new StoreDataRequest(
-        UUID.randomUUID().toString(), outputSource, loadResp.getPayload()); // no
-                                                                            // delimiter
-                                                                            // specified
+    StoreRequest storeReq = new StoreRequest(outputSource, loadResp.getData(),
+        Delimiter.defaultDelimiter());
 
-    StoreDataResponse storeResp = dataStore.storeData(storeReq);
+    StoreResponse storeResp = dataStore.store(storeReq);
+
 
     // Validate API status
     assertEquals(ApiStatus.SUCCESS, storeResp.getStatus());
