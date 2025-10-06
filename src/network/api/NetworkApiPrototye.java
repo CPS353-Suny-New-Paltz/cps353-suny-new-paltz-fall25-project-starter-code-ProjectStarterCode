@@ -1,9 +1,6 @@
 package network.api;
 
-import java.util.ArrayList;
-
 import project.annotations.NetworkAPIPrototype;
-import shared.stuff.ApiStatus;
 import shared.stuff.Resource;
 import shared.stuff.ResourceType;
 
@@ -29,30 +26,11 @@ public class NetworkApiPrototye {
 
     String sessionToken = loginResp.getSessionToken();
 
-    // Store Data
-    ResourceType type = ResourceType.DATABASE;
-    Resource resource = new Resource(type, "db://myDb");
+    Resource inResource = new Resource(ResourceType.FILE, "file://file.txt");
+    Resource outResource = new Resource(ResourceType.FILE, "file://file.txt");
 
-    StoreDataResponse stoResponse = api.storeData(
-
-        new StoreDataRequest(sessionToken, resource, new ArrayList<>()));
-
-    // check is store was successful
-    if (!(stoResponse.getStatus() == ApiStatus.SUCCESS)
-        && stoResponse.getErrorMessage() != null) {
-      System.out.println(stoResponse.getErrorMessage());
-    }
-
-    // Load Data
-    LoadDataResponse loadResponse = api
-        .loadData(new LoadDataRequest(sessionToken, resource));
-
-    if (!(loadResponse.getStatus() == ApiStatus.SUCCESS)
-        && loadResponse.getErrorMessage() != null) {
-      System.out.println(loadResponse.getErrorMessage());
-    } else {
-      System.out.println(loadResponse.getPayload());
-    }
+    ComputationRequest compReq = new ComputationRequest(inResource, outResource,
+        Delimiter.defaultDelimiter());
 
     // Logout
     LogoutResponse logoutResp = api.logout(new LogoutRequest(sessionToken));

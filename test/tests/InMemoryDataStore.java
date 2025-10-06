@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import network.api.Delimiter;
-import network.api.LoadDataRequest;
-import network.api.LoadDataResponse;
-import network.api.StoreDataRequest;
-import network.api.StoreDataResponse;
 import process.api.LoadRequest;
 import process.api.LoadResponse;
 import process.api.ProcessApi;
@@ -38,7 +34,7 @@ public class InMemoryDataStore implements ProcessApi {
    * or the default delimiter then adds it to TestOutputConfig as individual
    * elements
    */
-  public StoreDataResponse storeData(StoreDataRequest req) {
+  public StoreResponse storeData(StoreRequest req) {
 
     Delimiter delimiter;
     if (req.getDelimiter() == null) {
@@ -54,8 +50,7 @@ public class InMemoryDataStore implements ProcessApi {
 
     List out = new TestOutputConfig().getOutputData();
 
-    return new StoreDataResponse(ApiStatus.SUCCESS, resource,
-
+    return new StoreResponse(ApiStatus.SUCCESS, resource,
         "Data stored successfully");
   }
 
@@ -64,7 +59,7 @@ public class InMemoryDataStore implements ProcessApi {
    * in the resource field. It then separates each using the specified delimiter
    * and returns it to the user as an array of bytes
    */
-  public LoadDataResponse loadData(LoadDataRequest req) {
+  public LoadResponse loadData(LoadRequest req) {
 
     Delimiter delimiter;
     if (req.getDelimiter() == null) {
@@ -92,7 +87,7 @@ public class InMemoryDataStore implements ProcessApi {
 
     // return the byte[], no resource is needed because we would read from user
     // supplied resource
-    return new LoadDataResponse(ApiStatus.SUCCESS, data, delimiter,
+    return new LoadResponse(ApiStatus.SUCCESS, data, delimiter,
         "Data loaded successfully");
   }
 

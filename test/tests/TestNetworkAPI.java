@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,14 +12,10 @@ import org.junit.jupiter.api.Test;
 import api.implementations.ConceptualAPI;
 import api.implementations.NetworkAPI;
 import api.implementations.ProcessAPI;
-import network.api.LoadDataRequest;
-import network.api.LoadDataResponse;
 import network.api.LoginRequest;
 import network.api.LoginResponse;
 import network.api.LogoutRequest;
 import network.api.LogoutResponse;
-import network.api.StoreDataRequest;
-import network.api.StoreDataResponse;
 import shared.stuff.ApiStatus;
 import shared.stuff.Resource;
 import shared.stuff.ResourceType;
@@ -77,29 +72,13 @@ public class TestNetworkAPI {
   }
 
   @Test
-  public void testStoreData() {
-    StoreDataRequest req = new StoreDataRequest(UUID.randomUUID().toString(),
-        networkApi.getResource(), new ArrayList<>());
-
-    assertEquals(ResourceType.DATABASE, req.getDestination().getType());
-
-    StoreDataResponse resp = networkApi.storeData(req);
-
-    assertNotNull(resp);
-    assertEquals(resp.getLocation().getUri(), req.getDestination().getUri());
-    assertEquals(ApiStatus.ERROR, resp.getStatus());
+  public void testSetReadWrite() {
+    assertEquals(processApi, networkApi.getReadWrite());
   }
 
   @Test
-  public void testLoadData() {
-    LoadDataRequest req = new LoadDataRequest(UUID.randomUUID().toString(),
-        networkApi.getResource());
-
-    LoadDataResponse resp = networkApi.loadData(req);
-
-    assertNotNull(resp);
-    assertEquals(false, resp.success());
-    assertEquals(ApiStatus.ERROR, resp.getStatus());
+  public void testSetCompute() {
+    assertEquals(conceptualApi, networkApi.getCompute());
   }
 
 }

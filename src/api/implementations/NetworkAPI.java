@@ -7,15 +7,11 @@ import java.util.UUID;
 import network.api.ComputationRequest;
 import network.api.ComputationResponse;
 import network.api.Delimiter;
-import network.api.LoadDataRequest;
-import network.api.LoadDataResponse;
 import network.api.LoginRequest;
 import network.api.LoginResponse;
 import network.api.LogoutRequest;
 import network.api.LogoutResponse;
 import network.api.NetworkApi;
-import network.api.StoreDataRequest;
-import network.api.StoreDataResponse;
 import process.api.LoadRequest;
 import process.api.LoadResponse;
 import process.api.StoreRequest;
@@ -28,117 +24,114 @@ import shared.stuff.Resource;
  */
 public class NetworkAPI implements NetworkApi {
 
-  // will need to communicate with the ProcessAPI to pass instructions to the
-  // Data Storage System
-  private ProcessAPI readWrite;
+	// will need to communicate with the ProcessAPI to pass instructions to the
+	// Data Storage System
+	private ProcessAPI readWrite;
 
-  // Will also need to talk to the computation section to perform calculations,
-  // get session keys, etc
-  private ConceptualAPI compute;
+	// Will also need to talk to the computation section to perform calculations,
+	// get session keys, etc
+	private ConceptualAPI compute;
 
-  // default delimiter if user does not provide one
-  private Delimiter defaultDelimiter = Delimiter.COMMA;
+	// default delimiter if user does not provide one
+	private Delimiter defaultDelimiter = Delimiter.COMMA;
 
-  private Resource resource;
+	private Resource resource;
 
-  @Override
-  public LoginResponse login(LoginRequest req) {
+	@Override
+	public LoginResponse login(LoginRequest req) {
 
-    return new LoginResponse(UUID.randomUUID().toString(),
-        UUID.randomUUID().toString(), ApiStatus.ERROR);
-  }
+		return new LoginResponse(UUID.randomUUID().toString(), UUID.randomUUID().toString(), ApiStatus.ERROR);
+	}
 
-  @Override
-  public LogoutResponse logout(LogoutRequest req) {
-    return new LogoutResponse(ApiStatus.ERROR);
-  }
+	@Override
+	public LogoutResponse logout(LogoutRequest req) {
+		return new LogoutResponse(ApiStatus.ERROR);
+	}
 
-  @Override
-  public StoreDataResponse storeData(StoreDataRequest req) {
+	/**
+	 * does the computation: read input, run compute, write output, return results
+	 * as byte[]
+	 */
+	@Override
+	public ComputationResponse compute(ComputationRequest request) {
+		try {
+			// Load integers from input resource
+			LoadResponse loadResp = readWrite.load(new LoadRequest(request.getInputResource(), request.getDelimiter()));
+			if (loadResp.getStatus() != ApiStatus.SUCCESS) {
+				return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Failed to load input data");
+			}
 
-    StoreResponse resp = readWrite.store(new StoreRequest(req.getDestination(),
-        req.getPayload(), req.getDelimiter()));
-    return new StoreDataResponse(resp.getStatus(), req.getDestination(),
-        resp.getMessage());
+			// expect the input integers to be in a List<Integer>, provided
+			// in LoadResponse
+			List<Integer> inputs = loadResp.getPayload();
+			List<Integer> results = new ArrayList<>();
 
-  }
+			// Run computation for each input
+			for (int value : inputs) {
+				results.add(compute.performComputation(value).getResult());
+			}
 
-  @Override
-  public LoadDataResponse loadData(LoadDataRequest req) {
-    LoadResponse resp = readWrite
-        .load(new LoadRequest(req.getSource(), req.getDelimiter()));
+			// Store results in output resource
+			List resultBatch = new ArrayList<>(results);
+			StoreResponse storeResp = readWrite
+					.store(new StoreRequest(request.getOutputResource(), resultBatch, request.getDelimiter()));
 
-    return new LoadDataResponse(resp.getStatus(), resp.getData(),
-        defaultDelimiter, resp.getMessage());
-  }
+			if (storeResp.getStatus() != ApiStatus.SUCCESS) {
+				return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Failed to store results");
+			}
 
-  /**
-   * does the computation: read input, run compute, write output, return results
-   * as byte[]
-   */
-  public ComputationResponse compute(ComputationRequest request) {
-    try {
-      // Load integers from input resource
-      LoadResponse loadResp = readWrite.load(
-          new LoadRequest(request.getInputResource(), request.getDelimiter()));
-      if (loadResp.getStatus() != ApiStatus.SUCCESS) {
-        return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-            "Failed to load input data");
-      }
+			// return ComputationResponse to the user, results stored in a
+			// List
+			return new ComputationResponse(ApiStatus.SUCCESS, resultBatch, "Computation completed");
 
-      // expect the input integers to be in a DataBatch<List<Integer>>, provided
-      // in LoadResponse
-      List<Integer> inputs = loadResp.getData();
-      List<Integer> results = new ArrayList<>();
+		} catch (Exception e) {
+			return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Error: " + e.getMessage());
+		}
+	}
 
-      // Run computation for each input
-      for (int value : inputs) {
-        results.add(compute.performComputation(value).getResult());
-      }
+	public ProcessAPI getReadWrite() {
+		return readWrite;
+	}
 
-      // Store results in output resource
-      List resultBatch = new ArrayList<>(results);
-      StoreResponse storeResp = readWrite.store(new StoreRequest(
-          request.getOutputResource(), resultBatch, request.getDelimiter()));
+	public void setReadWrite(ProcessAPI readWrite) {
+		this.readWrite = readWrite;
+	}
 
-      if (storeResp.getStatus() != ApiStatus.SUCCESS) {
-        return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-            "Failed to store results");
-      }
+	public ConceptualAPI getCompute() {
+		return compute;
+	}
 
-      // return ComputationResponse to the user, results stored in a
-      // DataBatch<List>
-      return new ComputationResponse(ApiStatus.SUCCESS, resultBatch,
-          "Computation completed");
+	public void setCompute(ConceptualAPI compute) {
+		this.compute = compute;
+	}
 
-    } catch (Exception e) {
-      return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-          "Error: " + e.getMessage());
-    }
-  }
+	public Resource getResource() {
+		return resource;
+	}
 
-  public ProcessAPI getReadWrite() {
-    return readWrite;
-  }
+	public void setResource(Resource resource) {
+		this.resource = resource;
+	}
 
-  public void setReadWrite(ProcessAPI readWrite) {
-    this.readWrite = readWrite;
-  }
-
-  public ConceptualAPI getCompute() {
-    return compute;
-  }
-
-  public void setCompute(ConceptualAPI compute) {
-    this.compute = compute;
-  }
-
-  public Resource getResource() {
-    return resource;
-  }
-
-  public void setResource(Resource resource) {
-    this.resource = resource;
-  }
-
+	/**
+	 * These do not belong in the network api, just leaving them commented out
+	 * incase i need this later.
+	 * 
+	 * @Override public StoreDataResponse storeData(StoreDataRequest req) {
+	 * 
+	 *           StoreResponse resp = readWrite.store(new
+	 *           StoreRequest(req.getDestination(), req.getPayload(),
+	 *           req.getDelimiter())); return new
+	 *           StoreDataResponse(resp.getStatus(), req.getDestination(),
+	 *           resp.getMessage());
+	 * 
+	 *           }
+	 * 
+	 * @Override public LoadDataResponse loadData(LoadDataRequest req) {
+	 *           LoadResponse resp = readWrite .load(new
+	 *           LoadRequest(req.getSource(), req.getDelimiter()));
+	 * 
+	 *           return new LoadDataResponse(resp.getStatus(), resp.getData(),
+	 *           defaultDelimiter, resp.getMessage()); }
+	 */
 }

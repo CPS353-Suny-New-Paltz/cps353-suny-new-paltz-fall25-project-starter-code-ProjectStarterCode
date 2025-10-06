@@ -37,6 +37,7 @@ public class ProcessAPI implements ProcessApi {
       return loadFromFile(src, request.getDelimiter());
     }
     return new LoadResponse(ApiStatus.ERROR, new ArrayList<>(),
+        Delimiter.defaultDelimiter(),
         "Unsupported resource type or missing URI");
   }
 
@@ -44,9 +45,9 @@ public class ProcessAPI implements ProcessApi {
   public StoreResponse store(StoreRequest request) {
     Resource dest = request.getDestination();
     if (dest.getType() == ResourceType.FILE && dest.getUri() != null) {
-      return storeToFile(dest, request.getData(), request.getDelimiter());
+      return storeToFile(dest, request.getPayload(), request.getDelimiter());
     }
-    return new StoreResponse(ApiStatus.ERROR,
+    return new StoreResponse(ApiStatus.ERROR, dest,
         "Unsupported resource type or missing URI");
   }
 
@@ -69,10 +70,10 @@ public class ProcessAPI implements ProcessApi {
           .collect(Collectors.toList());
 
       return new LoadResponse(ApiStatus.SUCCESS, new ArrayList<>(data),
-          "Loaded successfully");
+          Delimiter.defaultDelimiter(), "Loaded successfully");
     } catch (IOException | NumberFormatException e) {
       return new LoadResponse(ApiStatus.ERROR, new ArrayList<>(),
-          "Failed to load: " + e.getMessage());
+          Delimiter.defaultDelimiter(), "Failed to load: " + e.getMessage());
     }
 
   }
@@ -97,9 +98,9 @@ public class ProcessAPI implements ProcessApi {
 
       Files.writeString(Paths.get(dest.getUri()), joined);
 
-      return new StoreResponse(ApiStatus.SUCCESS, "Stored successfully");
+      return new StoreResponse(ApiStatus.SUCCESS, dest, "Stored successfully");
     } catch (IOException e) {
-      return new StoreResponse(ApiStatus.ERROR,
+      return new StoreResponse(ApiStatus.ERROR, dest,
           "Failed to store: " + e.getMessage());
     }
 

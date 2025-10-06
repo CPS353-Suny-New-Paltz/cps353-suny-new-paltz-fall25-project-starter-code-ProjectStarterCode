@@ -27,18 +27,11 @@ public interface NetworkApi {
   LogoutResponse logout(LogoutRequest req);
 
   /**
-   * Facilitates the storing of user submitted data into a user specified source
+   * Kicks off a computation
    * 
-   * @param StoreDataRequest
-   * @return StoreDataResponse
+   * @param request
+   *          - the user request for the computation
+   * @return a response containing the computation output
    */
-  StoreDataResponse storeData(StoreDataRequest req);
-
-  /**
-   * Handles retrieving (loading) data from a user specified source
-   * 
-   * @param LoadDataRequest
-   * @return LoadDataResponse
-   */
-  LoadDataResponse loadData(LoadDataRequest req);
+  public ComputationResponse compute(ComputationRequest request);
 }
