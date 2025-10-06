@@ -7,15 +7,11 @@ import java.util.UUID;
 import network.api.ComputationRequest;
 import network.api.ComputationResponse;
 import network.api.Delimiter;
-import network.api.LoadDataRequest;
-import network.api.LoadDataResponse;
 import network.api.LoginRequest;
 import network.api.LoginResponse;
 import network.api.LogoutRequest;
 import network.api.LogoutResponse;
 import network.api.NetworkApi;
-import network.api.StoreDataRequest;
-import network.api.StoreDataResponse;
 import process.api.LoadRequest;
 import process.api.LoadResponse;
 import process.api.StoreRequest;
@@ -53,29 +49,11 @@ public class NetworkAPI implements NetworkApi {
     return new LogoutResponse(ApiStatus.ERROR);
   }
 
-  @Override
-  public StoreDataResponse storeData(StoreDataRequest req) {
-
-    StoreResponse resp = readWrite.store(new StoreRequest(req.getDestination(),
-        req.getPayload(), req.getDelimiter()));
-    return new StoreDataResponse(resp.getStatus(), req.getDestination(),
-        resp.getMessage());
-
-  }
-
-  @Override
-  public LoadDataResponse loadData(LoadDataRequest req) {
-    LoadResponse resp = readWrite
-        .load(new LoadRequest(req.getSource(), req.getDelimiter()));
-
-    return new LoadDataResponse(resp.getStatus(), resp.getData(),
-        defaultDelimiter, resp.getMessage());
-  }
-
   /**
    * does the computation: read input, run compute, write output, return results
    * as byte[]
    */
+  @Override
   public ComputationResponse compute(ComputationRequest request) {
     try {
       // Load integers from input resource
@@ -86,7 +64,7 @@ public class NetworkAPI implements NetworkApi {
             "Failed to load input data");
       }
 
-      // expect the input integers to be in a DataBatch<List<Integer>>, provided
+      // expect the input integers to be in a List<Integer>, provided
       // in LoadResponse
       List<Integer> inputs = loadResp.getData();
       List<Integer> results = new ArrayList<>();
@@ -107,7 +85,7 @@ public class NetworkAPI implements NetworkApi {
       }
 
       // return ComputationResponse to the user, results stored in a
-      // DataBatch<List>
+      // List
       return new ComputationResponse(ApiStatus.SUCCESS, resultBatch,
           "Computation completed");
 
@@ -141,4 +119,25 @@ public class NetworkAPI implements NetworkApi {
     this.resource = resource;
   }
 
+  /**
+   * These do not belong in the network api, just leaving them commented out
+   * incase i need this later.
+   * 
+   * @Override public StoreDataResponse storeData(StoreDataRequest req) {
+   * 
+   *           StoreResponse resp = readWrite.store(new
+   *           StoreRequest(req.getDestination(), req.getPayload(),
+   *           req.getDelimiter())); return new
+   *           StoreDataResponse(resp.getStatus(), req.getDestination(),
+   *           resp.getMessage());
+   * 
+   *           }
+   * 
+   * @Override public LoadDataResponse loadData(LoadDataRequest req) {
+   *           LoadResponse resp = readWrite .load(new
+   *           LoadRequest(req.getSource(), req.getDelimiter()));
+   * 
+   *           return new LoadDataResponse(resp.getStatus(), resp.getData(),
+   *           defaultDelimiter, resp.getMessage()); }
+   */
 }
