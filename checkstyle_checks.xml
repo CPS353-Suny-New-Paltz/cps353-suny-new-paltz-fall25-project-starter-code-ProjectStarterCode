@@ -23,6 +23,13 @@
     <property name="optional" value="true"/>
   </module>
 
+<!-- Keep lines reasonable, but ignore imports/URLs/packages -->
+<module name="LineLength">
+  <property name="max" value="300"/>
+  <property name="ignorePattern"
+            value="^package.*|^import.*|href\s*=\s*&quot;[^&quot;]*&quot;|http://|https://|ftp://"/>
+</module>
+          
   <module name="TreeWalker">
     <module name="OuterTypeFilename"/>
     <module name="IllegalTokenText">
