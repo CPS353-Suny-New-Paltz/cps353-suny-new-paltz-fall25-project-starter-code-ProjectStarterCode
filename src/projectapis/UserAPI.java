@@ -1,5 +1,5 @@
 //network api
-package projectapis.network;
+package projectapis;
 import project.annotations.NetworkAPI;
 
 @NetworkAPI
@@ -12,7 +12,5 @@ public interface UserAPI {
 	//not necessary in my computation
 	void setDelimiter(String delimiter);
 	
-	long executeComputation();
-	long fetchFactorialOfSum();
-	long fetchExistingResult();
+	void executeComputation();
 }
