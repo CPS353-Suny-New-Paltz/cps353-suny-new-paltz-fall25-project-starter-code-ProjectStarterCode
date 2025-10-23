@@ -1,3 +1,6 @@
 # Software Engineering Project Starter Code
 
-This repo will start you off with an initial configuration that you'll modify as part of Checkpoint 1. As part of the modifications, you'll eventually delete the contents of this README and replace it with documentation for your project.
+This system will find the factorial of the input number. For example, an input of '4' will have an output of '24'.
+
+
+![System Diagram](https://github.com/CPS353-Suny-New-Paltz/project-starter-code-yu-paz/blob/main/API.PNG?raw=true)
