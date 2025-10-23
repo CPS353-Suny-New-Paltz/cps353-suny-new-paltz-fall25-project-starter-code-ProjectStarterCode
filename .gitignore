@@ -8,3 +8,5 @@ build
 .settings
 bin
 *.class
+.DS_Store
+/.metadata/
