@@ -32,5 +32,5 @@ public class StorageComputeImp implements StorageComputeAPI {
     public void writeResult(String destination, String[] results, String delimiter) {
         // Empty implementation for now
     }
-
-}
+ }
+	
