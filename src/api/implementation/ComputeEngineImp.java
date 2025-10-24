@@ -1,8 +1,12 @@
 package api.implementation;
 
 import api.ComputeEngineAPI;
+import project.annotations.NetworkAPI;
+
 import java.math.BigInteger;
 
+
+@NetworkAPI
 public class ComputeEngineImp implements ComputeEngineAPI {
     
     @Override
