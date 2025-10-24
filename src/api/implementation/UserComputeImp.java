@@ -1,8 +1,11 @@
 package api.implementation;
 
 import api.UserComputeAPI;
+import project.annotations.ConceptualAPI;
 import api.StorageComputeAPI;
 
+
+@ConceptualAPI
 public class UserComputeImp implements UserComputeAPI {
     
     private StorageComputeAPI storageCompute;
