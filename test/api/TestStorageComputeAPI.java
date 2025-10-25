@@ -4,7 +4,7 @@ import api.StorageComputeAPI;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 
-class StorageComputeAPITest {
+class TestStorageComputeAPI {
     
     @Test
     void smokeTest() {
