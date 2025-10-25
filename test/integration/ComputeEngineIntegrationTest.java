@@ -18,13 +18,13 @@ class ComputeEngineIntegrationTest {
         // Configure test data store with input [1,10,25]
         testDataStore.addTestFile("input.txt", new int[]{1, 10, 25});
         
-        // FIX: Get numbers directly from test data store, NOT from StorageComputeImp
+        // Get numbers directly from test data store, NOT from StorageComputeImp
         int[] numbers = testDataStore.readNumbers("input.txt");
         
-        // FIX: Compute factorials using the real StorageComputeImp
+        // Compute factorials using the real StorageComputeImp
         String[] results = storageCompute.computeFactorial(numbers);
         
-        // FIX: Write results using test data store
+        // Write results using test data store
         testDataStore.writeResult("output.txt", results, ""); // No delimiter specified
         
         // Validation: Check what was written to output
