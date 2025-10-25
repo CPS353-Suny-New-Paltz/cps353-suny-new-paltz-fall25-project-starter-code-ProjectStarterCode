@@ -6,7 +6,8 @@ eclipse.project.name = 'FillThisIn'
 sourceSets {
 	main {
 	  java {
-		srcDirs = ['src']
+          srcDirs = ['src']
+          exclude 'project/emptyimplementations/**'
 	  }
 	}
 	test {
@@ -24,8 +25,12 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter:5.10.2')
 	testImplementation('org.mockito:mockito-core:5.10.0')
 	implementation('com.google.code.gson:gson:2.13.1')
+    implementation 'fr.inria.gforge.spoon:spoon-core:11.2.0'
 }
 
 test {
     useJUnitPlatform()
+    // enabled = false // Cheat to build if all filters are excluded
+    filter {
+    }
 }

@@ -1,3 +1,8 @@
-# Software Engineering Project Starter Code
+# Power Digit Sum Computation
 
-This repo will start you off with an initial configuration that you'll modify as part of Checkpoint 1. As part of the modifications, you'll eventually delete the contents of this README and replace it with documentation for your project.
+API Diagram:
+
+![System Diagram](assets/GithubAPI.drawio.svg)
+
+The api will use the sum of the digits of a number raised to a power.
+For example, for an input of 2^15 = 32768, the output would be 3 + 2 + 7 + 6 + 8 = 26.
