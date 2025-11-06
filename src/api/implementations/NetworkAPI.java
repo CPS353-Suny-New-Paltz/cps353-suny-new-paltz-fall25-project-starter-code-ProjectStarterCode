@@ -14,6 +14,7 @@ import network.api.LogoutResponse;
 import network.api.NetworkApi;
 import process.api.LoadRequest;
 import process.api.LoadResponse;
+import process.api.ProcessApi;
 import process.api.StoreRequest;
 import process.api.StoreResponse;
 import shared.stuff.ApiStatus;
@@ -24,14 +25,22 @@ import shared.stuff.Resource;
  */
 public class NetworkAPI implements NetworkApi {
 
-  private ProcessAPI readWrite;
+
+  private ProcessApi readWrite;
 
   private ConceptualAPI compute;
 
   public NetworkAPI() {
     // will need to communicate with the ProcessAPI to pass instructions to the
     // Data Storage System
-    this.readWrite = new ProcessAPI();
+
+    this.readWrite = new ProcessApiGrpcClient("localhost", 50052); // GRPC
+                                                                   // process
+                                                                   // client,
+                                                                   // implements
+                                                                   // PRocessApi
+
+
     // Will also need to talk to the computation section to perform
     // calculations,
     // get session keys, etc
@@ -100,7 +109,7 @@ public class NetworkAPI implements NetworkApi {
           new LoadRequest(request.getInputResource(), request.getDelimiter()));
       if (loadResp.getStatus() != ApiStatus.SUCCESS) {
         return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-            "Failed to load input data");
+            loadResp.getMessage());
       }
 
       // expect the input integers to be in a List<Integer>, provided
@@ -119,8 +128,11 @@ public class NetworkAPI implements NetworkApi {
           request.getOutputResource(), resultBatch, request.getDelimiter()));
 
       if (storeResp.getStatus() != ApiStatus.SUCCESS) {
-        return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-            "Failed to store results");
+        String msg = storeResp.getMessage();
+        if (msg == null) {
+          msg = "Failed to store results";
+        }
+        return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), msg);
       }
 
       // return ComputationResponse to the user, results stored in a
@@ -146,7 +158,7 @@ public class NetworkAPI implements NetworkApi {
     return new ArrayList<>(requests);
   }
 
-  public ProcessAPI getReadWrite() {
+  public ProcessApi getReadWrite() {
     return readWrite;
   }
 
