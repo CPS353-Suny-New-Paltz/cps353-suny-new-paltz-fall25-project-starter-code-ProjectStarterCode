@@ -24,6 +24,7 @@ import process.api.StoreRequest;
 import process.api.StoreResponse;
 import shared.stuff.ApiStatus;
 import shared.stuff.Resource;
+import shared.stuff.TimingLogger;
 
 /**
  * Multi-threaded implementation of NetworkApi.
@@ -92,28 +93,23 @@ public class MultithreadedNetworkAPI implements NetworkApi {
   }
 
   /**
-   * does the computation: read input, run compute, write output, return results
-   * as Arraylist<Integer>
-   * 
-   * multi-threaded differences: - makes Callable task for each input value
-   * (each calls compute.performComputation(value).getResult()) - waits using
-   * Future.get() and gets results in order
+   * The modified verison of compute to test perfomance and identify bottle
+   * necks.
    */
-
-  /**
-   * 
-   */
-  @Override
   public ComputationResponse compute(ComputationRequest request) {
+
+    long totalStart = TimingLogger.startSection("Total Compute Time");
 
     if (request == null) {
       throw new IllegalArgumentException("Request cannot be null");
     }
 
     try {
-      // same as normal
+      long loadStart = TimingLogger.startSection("Load Phase");
       LoadResponse loadResp = readWrite.load(
           new LoadRequest(request.getInputResource(), request.getDelimiter()));
+      TimingLogger.endSection("Load Phase", loadStart);
+
       if (loadResp.getStatus() != ApiStatus.SUCCESS) {
         return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
             "Failed to load input data");
@@ -122,36 +118,40 @@ public class MultithreadedNetworkAPI implements NetworkApi {
       List<Integer> inputs = loadResp.getPayload();
       List<Integer> results = new ArrayList<>();
 
-      // submit Callables to executor (1 per input)
+      long taskSubmitStart = TimingLogger.startSection("Task Submission");
       List<Future<Integer>> futures = new ArrayList<>(inputs.size());
       for (int value : inputs) {
         Callable<Integer> task = () -> {
-          // performComputation should be fully thread safe
-          return compute.performComputation(value).getResult();
+          long compStart = TimingLogger.startSection("Computation Phase");
+          int result = compute.performComputation(value).getResult();
+          TimingLogger.endSection("Computation Phase", compStart);
+          return result;
         };
         futures.add(executor.submit(task));
       }
+      TimingLogger.endSection("Task Submission", taskSubmitStart);
 
-      // grab results in order
+      long collectStart = TimingLogger.startSection("Result Collection");
       for (Future<Integer> f : futures) {
         try {
-          Integer r = f.get(); // wait until task is done
-          results.add(r);
+          results.add(f.get());
         } catch (InterruptedException e) {
-          Thread.currentThread().interrupt(); // allow exception to be caught in
-                                              // higher level code
+          Thread.currentThread().interrupt();
           return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
               "Computation interrupted");
         } catch (ExecutionException e) {
-          // job threw error, whole computation fails
           return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-              "Computation failed in worker thread: " + e.getCause());
+              "Worker thread failed: " + e.getCause());
         }
       }
+      TimingLogger.endSection("Result Collection", collectStart);
 
-      // same as normal
+      long storeStart = TimingLogger.startSection("Store Phase");
       StoreResponse storeResp = readWrite.store(new StoreRequest(
           request.getOutputResource(), results, request.getDelimiter()));
+      TimingLogger.endSection("Store Phase", storeStart);
+
+      TimingLogger.endSection("Total Compute Time", totalStart);
 
       if (storeResp.getStatus() != ApiStatus.SUCCESS) {
         return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
@@ -159,16 +159,73 @@ public class MultithreadedNetworkAPI implements NetworkApi {
       }
 
       return new ComputationResponse(ApiStatus.SUCCESS, results,
-          "Computation completed (multi-threaded)");
+          "Computation completed");
 
-    } catch (IllegalArgumentException e) {
-      return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
-          "Invalid request: " + e.getMessage());
     } catch (Exception e) {
       return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
           "Error: " + e.getMessage());
     }
   }
+
+  /**
+   * does the computation: read input, run compute, write output, return results
+   * as Arraylist<Integer>
+   * 
+   * multi-threaded differences: - makes Callable task for each input value
+   * (each calls compute.performComputation(value).getResult()) - waits using
+   * Future.get() and gets results in order
+   */
+  /**
+   * @Override public ComputationResponse compute(ComputationRequest request) {
+   * 
+   *           if (request == null) { throw new
+   *           IllegalArgumentException("Request cannot be null"); }
+   * 
+   *           try { // same as normal LoadResponse loadResp = readWrite.load(
+   *           new LoadRequest(request.getInputResource(),
+   *           request.getDelimiter())); if (loadResp.getStatus() !=
+   *           ApiStatus.SUCCESS) { return new
+   *           ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Failed
+   *           to load input data"); }
+   * 
+   *           List<Integer> inputs = loadResp.getPayload(); List<Integer>
+   *           results = new ArrayList<>();
+   * 
+   *           // submit Callables to executor (1 per input)
+   *           List<Future<Integer>> futures = new ArrayList<>(inputs.size());
+   *           for (int value : inputs) { Callable<Integer> task = () -> { //
+   *           performComputation should be fully thread safe return
+   *           compute.performComputation(value).getResult(); };
+   *           futures.add(executor.submit(task)); }
+   * 
+   *           // grab results in order for (Future<Integer> f : futures) { try
+   *           { Integer r = f.get(); // wait until task is done results.add(r);
+   *           } catch (InterruptedException e) {
+   *           Thread.currentThread().interrupt(); // allow exception to be
+   *           caught in // higher level code return new
+   *           ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+   *           "Computation interrupted"); } catch (ExecutionException e) { //
+   *           job threw error, whole computation fails return new
+   *           ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+   *           "Computation failed in worker thread: " + e.getCause()); } }
+   * 
+   *           // same as normal StoreResponse storeResp = readWrite.store(new
+   *           StoreRequest( request.getOutputResource(), results,
+   *           request.getDelimiter()));
+   * 
+   *           if (storeResp.getStatus() != ApiStatus.SUCCESS) { return new
+   *           ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Failed
+   *           to store results"); }
+   * 
+   *           return new ComputationResponse(ApiStatus.SUCCESS, results,
+   *           "Computation completed (multi-threaded)");
+   * 
+   *           } catch (IllegalArgumentException e) { return new
+   *           ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Invalid
+   *           request: " + e.getMessage()); } catch (Exception e) { return new
+   *           ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), "Error: "
+   *           + e.getMessage()); } }
+   */
 
   /**
    * needed for smoke test
