@@ -96,7 +96,6 @@ public class MultithreadedNetworkAPI implements NetworkApi {
    * The modified verison of compute to test perfomance and identify bottle
    * necks.
    */
-  @Override
   public ComputationResponse compute(ComputationRequest request) {
 
     long totalStart = TimingLogger.startSection("Total Compute Time");
@@ -122,8 +121,12 @@ public class MultithreadedNetworkAPI implements NetworkApi {
       long taskSubmitStart = TimingLogger.startSection("Task Submission");
       List<Future<Integer>> futures = new ArrayList<>(inputs.size());
       for (int value : inputs) {
-        Callable<Integer> task = () -> compute.performComputation(value)
-            .getResult();
+        Callable<Integer> task = () -> {
+          long compStart = TimingLogger.startSection("Computation Phase");
+          int result = compute.performComputation(value).getResult();
+          TimingLogger.endSection("Computation Phase", compStart);
+          return result;
+        };
         futures.add(executor.submit(task));
       }
       TimingLogger.endSection("Task Submission", taskSubmitStart);
