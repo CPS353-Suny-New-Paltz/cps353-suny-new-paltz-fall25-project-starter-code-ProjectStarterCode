@@ -54,4 +54,10 @@ public class TimingLogger {
     System.out.println("--------------------------");
   }
 
+  // reset runs, will be needed when testing old vs improved
+  public static void reset() {
+    totalTimes.clear();
+    counts.clear();
+  }
+
 }
