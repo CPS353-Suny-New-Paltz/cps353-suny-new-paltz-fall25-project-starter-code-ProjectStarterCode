@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import conceptual.api.ConceptualApi;
 import conceptual.api.JobResponse;
 import conceptual.api.JobStatus;
+import shared.stuff.FastPbkdf2;
 import shared.stuff.Pbkdf2;
 
 /**
@@ -66,6 +67,32 @@ public class ConceptualAPI implements ConceptualApi {
     try {
       // PBKDF2 computation
       int result = Pbkdf2.compute(input);
+      jobStatuses.put(jobId, JobStatus.COMPLETED);
+      return new JobResponse(jobId, JobStatus.COMPLETED, result);
+
+    } catch (NoSuchAlgorithmException e) {
+      // can be thrown by calling .compute()
+      jobStatuses.put(jobId, JobStatus.FAILED);
+      return new JobResponse(jobId, JobStatus.FAILED, -1);
+
+    } catch (Exception e) {
+      // add to map and catch unexpected
+      jobStatuses.put(jobId, JobStatus.FAILED);
+      return new JobResponse(jobId, JobStatus.FAILED, -1);
+    }
+  }
+
+  public JobResponse performComputationFast(int input) {
+
+    // do not need to check if input is null because primitive type int cannot
+    // be null
+
+    String jobId = UUID.randomUUID().toString();
+    jobStatuses.put(jobId, JobStatus.RUNNING);
+
+    try {
+      // PBKDF2 computation
+      int result = FastPbkdf2.compute(input);
       jobStatuses.put(jobId, JobStatus.COMPLETED);
       return new JobResponse(jobId, JobStatus.COMPLETED, result);
 

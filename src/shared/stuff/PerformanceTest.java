@@ -1,7 +1,7 @@
 package shared.stuff;
 
 /**
- * Simple class that runs compute so we can gather bottle neck data
+ * Simple class that runs compute so we can gather performance data, used to locate performance issues
  */
 import java.util.ArrayList;
 import java.util.List;
