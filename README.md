@@ -25,3 +25,18 @@ Output: 1890392330
 
 This API is multithreaded to allow multiple users to initiate computation requests. I chose a maximum of 8 threads as my CPU has 6 physical cores and 12 threads in total. 8 is a 
 good middle ground to maximize efficiency from multithreading without overwhelming the CPU and reducing efficiency. I also made the number of threads slightly dynamic, so my code will choose the max number of threads by looking at the number of processors on the client machine and taking the minimum of that and 8. 
+
+### Performance Improvement
+
+In working on this project, I found a massive performance improvement within the Pbkdf2 computation. This computation essentially does repeated SHA-256 hashing of an input value. To do the hashing, I used the java.security.MessageDigest library. I used a nested loop to do this kind of for no reason but thats just what I choose to do. Within the inner loop I had these 3 lines of code:  
+
+```java
+md.reset();
+md.update(value);
+value = md.digest();
+```
+
+Creating this computation was the first time I used the MessageDigest library ever, so I was not familiar with it at all. When I began to look for places I could improve performance I quickly noticed the computation was taking the vast majority of the total execution time so naturally I started looking there. I then decided to dive into the MessageDigest class and really learn what each method call does. I dove into the documentation and saw the following within the MessageDigest docs: "After digest has been called, the MessageDigest object is reset to its initialized state." So the digest() method includes a call to reset() within it or in some way resets the object. This means the line "md.reset()" was entirely redundant and unnecessary. 
+
+I removed this line completely which was originally located within the inner most loop body which greatly improved performance. I first ran a benchmark test using Junit which passes if the performance difference between the old and improved version is faster more than 10%, meaning 10% improvement. I used a custom class TimingLogger to measure various sections of the compute method, so I was able to just isolate and measure the computation itself to remove any other data. The test immediately passed, but then I was curious just how much of an improvement was made. I made another class: PerformanceComparison which again measured the differences between the old and new computations and printed the differences along with the percentage improvement. I ran this many times and every single time the improvement percentage was above 50%. The most I saw was about 80% improvement! So just this one small removal from the inner loop body has a massive impact on the overall performance of my code.
+
