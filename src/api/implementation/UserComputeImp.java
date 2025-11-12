@@ -1,11 +1,11 @@
 package api.implementation;
 
 import api.UserComputeAPI;
-import project.annotations.ConceptualAPI;
+import project.annotations.NetworkAPI;
 import api.StorageComputeAPI;
 
 
-@ConceptualAPI
+@NetworkAPI
 public class UserComputeImp implements UserComputeAPI {
     
     private StorageComputeAPI storageCompute;
