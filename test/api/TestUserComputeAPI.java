@@ -1,6 +1,5 @@
-package test.api;
+package api;
 
-import api.UserComputeAPI;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 

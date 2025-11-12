@@ -1,4 +1,4 @@
-package test.integration;
+package integration;
 
 import api.OutputConfig;
 import java.util.List;
