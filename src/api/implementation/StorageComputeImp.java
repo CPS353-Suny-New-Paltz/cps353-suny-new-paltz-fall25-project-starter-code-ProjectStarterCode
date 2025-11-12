@@ -1,11 +1,10 @@
 package api.implementation;
 
 import api.StorageComputeAPI;
-import project.annotations.ProcessAPI;
 import api.ComputeEngineAPI;
 
 
-@ProcessAPI
+
 public class StorageComputeImp implements StorageComputeAPI {
     
     private ComputeEngineAPI computeEngine;
