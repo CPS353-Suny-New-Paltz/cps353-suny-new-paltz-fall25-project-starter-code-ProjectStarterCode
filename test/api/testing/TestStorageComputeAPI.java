@@ -1,6 +1,9 @@
-package api;
+package api.testing;
 
 import org.junit.jupiter.api.Test;
+
+import api.StorageComputeAPI;
+
 import static org.mockito.Mockito.mock;
 
 class TestStorageComputeAPI {
