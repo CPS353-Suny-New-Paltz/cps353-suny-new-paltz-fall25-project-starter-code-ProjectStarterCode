@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+option java_package = "proto.network";
+option java_outer_classname = "NetworkProto";
+
+service NetworkService {
+  // Submit a job and wait for result (synchronous). Client gets final completion response.
+  rpc SubmitJob (JobRequest) returns (JobResponse);
+}
+
+message JobRequest {
+  optional string output_file = 1;
+  optional string delimiter = 2;
+}
+
+message JobResponse {
+  optional bool success = 1;
+  optional string message = 2;
+  repeated int32 results = 3; // optional: show some results back to the client
+}

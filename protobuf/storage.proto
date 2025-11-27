@@ -1,0 +1,49 @@
+syntax = "proto2";
+package proto.storage;
+
+option java_package = "proto.storage";
+option java_outer_classname = "StorageProto";
+
+service StorageService {
+  rpc ReadAllInputs(ReadAllInputsRequest) returns (MultiDataValueResponse);
+  rpc WriteAllOutputs(WriteAllOutputsRequest) returns (WriteResponse);
+
+  // Single value read/write (optional)
+  rpc ReadInput(ReadInputRequest) returns (DataValueResponse);
+  rpc WriteOutput(WriteOutputRequest) returns (WriteResponse);
+}
+
+message ReadAllInputsRequest {
+  optional string file_path = 1;
+  repeated int32 inline_values = 2; // optional: client can send values directly
+}
+
+message MultiDataValueResponse {
+  repeated int32 values = 1;
+  optional string error = 2;
+}
+
+message WriteAllOutputsRequest {
+  optional string file_path = 1;
+  repeated int32 values = 2;
+  optional string delimiter = 3;
+}
+
+message ReadInputRequest {
+  optional string file_path = 1;
+}
+
+message DataValueResponse {
+  optional int32 value = 1;
+  optional string error = 2;
+}
+
+message WriteOutputRequest {
+  optional string file_path = 1;
+  optional int32 value = 2;
+}
+
+message WriteResponse {
+  optional bool success = 1;
+  optional string message = 2;
+}
