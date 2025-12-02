@@ -93,6 +93,80 @@ public class MultithreadedNetworkAPI implements NetworkApi {
   }
 
   /**
+   * Fast, performance improved version of compute
+   */
+  public ComputationResponse computeFast(ComputationRequest request) {
+
+    long totalStart = TimingLogger.startSection("Total Compute Time");
+
+    if (request == null) {
+      throw new IllegalArgumentException("Request cannot be null");
+    }
+
+    try {
+      long loadStart = TimingLogger.startSection("Load Phase");
+      LoadResponse loadResp = readWrite.load(
+          new LoadRequest(request.getInputResource(), request.getDelimiter()));
+      TimingLogger.endSection("Load Phase", loadStart);
+
+      if (loadResp.getStatus() != ApiStatus.SUCCESS) {
+        return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+            "Failed to load input data");
+      }
+
+      List<Integer> inputs = loadResp.getPayload();
+      List<Integer> results = new ArrayList<>();
+
+      long taskSubmitStart = TimingLogger.startSection("Task Submission");
+      List<Future<Integer>> futures = new ArrayList<>(inputs.size());
+      for (int value : inputs) {
+        Callable<Integer> task = () -> {
+          long compStart = TimingLogger.startSection("Computation Phase");
+          int result = compute.performComputationFast(value).getResult();
+          TimingLogger.endSection("Computation Phase", compStart);
+          return result;
+        };
+        futures.add(executor.submit(task));
+      }
+      TimingLogger.endSection("Task Submission", taskSubmitStart);
+
+      long collectStart = TimingLogger.startSection("Result Collection");
+      for (Future<Integer> f : futures) {
+        try {
+          results.add(f.get());
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+              "Computation interrupted");
+        } catch (ExecutionException e) {
+          return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+              "Worker thread failed: " + e.getCause());
+        }
+      }
+      TimingLogger.endSection("Result Collection", collectStart);
+
+      long storeStart = TimingLogger.startSection("Store Phase");
+      StoreResponse storeResp = readWrite.store(new StoreRequest(
+          request.getOutputResource(), results, request.getDelimiter()));
+      TimingLogger.endSection("Store Phase", storeStart);
+
+      TimingLogger.endSection("Total Compute Time", totalStart);
+
+      if (storeResp.getStatus() != ApiStatus.SUCCESS) {
+        return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+            "Failed to store results");
+      }
+
+      return new ComputationResponse(ApiStatus.SUCCESS, results,
+          "Computation completed");
+
+    } catch (Exception e) {
+      return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+          "Error: " + e.getMessage());
+    }
+  }
+
+  /**
    * The modified verison of compute to test perfomance and identify bottle
    * necks.
    */

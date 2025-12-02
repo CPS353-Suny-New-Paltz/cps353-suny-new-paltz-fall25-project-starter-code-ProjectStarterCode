@@ -60,4 +60,9 @@ public class TimingLogger {
     counts.clear();
   }
 
+  // return total time for given label, helps with our benchmark test
+  public static long getTotalTime(String label) {
+    return totalTimes.getOrDefault(label, 0L);
+  }
+
 }
