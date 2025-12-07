@@ -1,0 +1,21 @@
+syntax = "proto2";
+package proto.compute;
+
+option java_package = "proto.compute";
+option java_outer_classname = "ComputeProto";
+
+service ComputeService {
+  rpc SubmitJob (JobRequest) returns (JobResponse);
+}
+
+message JobRequest {
+  optional string input_file = 1;
+  repeated int32 inline_values = 2;
+  optional string output_file = 3;
+  optional string delimiter = 4;
+}
+
+message JobResponse {
+  optional bool success = 1;
+  optional string message = 2;
+}
