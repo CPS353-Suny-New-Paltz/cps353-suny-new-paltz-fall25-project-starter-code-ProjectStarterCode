@@ -1,0 +1,33 @@
+syntax = "proto2";
+
+package project.usercompute.proto;
+
+// Versioning is good practice for persistence / BC
+message UserComputeRequestProto {
+  // either a file OR inline numbers
+  optional string input_file = 1;
+  repeated double inline_numbers = 2;
+
+  // required-ish in proto2: represent as "optional" but your code should enforce it
+  optional string output_file = 3;
+
+  // optional delimiter – empty string means "use default"
+  optional string delimiter = 4;
+
+  // optional version field for future compatibility
+  optional int32 version = 5;
+}
+
+message UserComputeResponseProto {
+  optional bool success = 1;
+  optional string message = 2;
+  optional string output_file = 3;
+  // optional version field if you ever store these
+  optional int32 version = 4;
+}
+
+// gRPC service = your high-level Network API 1 (controller/manager)
+service UserComputeService {
+  rpc RunComputation(UserComputeRequestProto)
+      returns (UserComputeResponseProto);
+}

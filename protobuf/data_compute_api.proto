@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package project.datacompute.proto;
+
+service DataComputeService {
+  rpc ReadInput (ReadInputRequest) returns (ReadInputResponse);
+  rpc WriteOutput (WriteOutputRequest) returns (WriteOutputResponse);
+}
+
+message ReadInputRequest {
+  optional string input_file = 1;
+}
+
+message ReadInputResponse {
+  repeated int32 numbers = 1;
+}
+
+message WriteOutputRequest {
+  repeated int32 numbers = 1;
+  optional string output_file = 2;
+}
+
+message WriteOutputResponse {
+  optional bool success = 1;
+  optional string message = 2;
+}
