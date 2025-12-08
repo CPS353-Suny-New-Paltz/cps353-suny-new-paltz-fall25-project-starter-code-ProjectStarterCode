@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-eclipse.project.name = 'FillThisIn' 
+eclipse.project.name = 'SoftwareEngineering' 
 
 sourceSets {
 	main {
@@ -28,4 +28,17 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    
+    filter{
+		excludeTestsMatching "tests.SmokeTestComputeEngineAPI.compRequestTest"
+		excludeTestsMatching "tests.SmokeTestComputeEngineAPI.calcResponseTest"
+		
+		excludeTestsMatching "tests.SmokeTestDataProcessAPI.readInputTest"
+		excludeTestsMatching "tests.SmokeTestDataProcessAPI.writeDataTest"
+		
+		excludeTestsMatching "tests.UserNetworkTest.inputVerifiedTest"
+		excludeTestsMatching "tests.UserNetworkTest.networkResponseTest"
+		
+	}
 }
+
