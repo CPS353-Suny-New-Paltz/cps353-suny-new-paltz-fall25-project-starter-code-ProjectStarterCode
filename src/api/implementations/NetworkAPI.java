@@ -1,5 +1,6 @@
 package api.implementations;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,11 +22,10 @@ import shared.stuff.ApiStatus;
 import shared.stuff.Resource;
 
 /**
+ * 
  * Implementation of the NetworkApi interface
  */
 public class NetworkAPI implements NetworkApi {
-
-
   private ProcessApi readWrite;
 
   private ConceptualAPI compute;
@@ -38,8 +38,7 @@ public class NetworkAPI implements NetworkApi {
                                                                    // process
                                                                    // client,
                                                                    // implements
-                                                                   // PRocessApi
-
+                                                                   // ProcessApi
 
     // Will also need to talk to the computation section to perform
     // calculations,
@@ -58,7 +57,6 @@ public class NetworkAPI implements NetworkApi {
       if (req == null) {
         throw new IllegalArgumentException("req cannot be null");
       }
-
       return new LoginResponse(UUID.randomUUID().toString(),
           UUID.randomUUID().toString(), ApiStatus.ERROR);
 
@@ -71,7 +69,6 @@ public class NetworkAPI implements NetworkApi {
       return new LoginResponse(null, null, ApiStatus.ERROR,
           "Error: " + e.getMessage());
     }
-
   }
 
   @Override
@@ -87,15 +84,15 @@ public class NetworkAPI implements NetworkApi {
       return new LogoutResponse(ApiStatus.ERROR,
           "Invalid request: " + e.getMessage());
     } catch (Exception e) {
-      // catch all exceptions we dont expect
+      // catch all exceptions we don't expect
       return new LogoutResponse(ApiStatus.ERROR, "Error: " + e.getMessage());
     }
-
   }
 
   /**
+   * 
    * does the computation: read input, run compute, write output, return results
-   * as Arraylist<Integer>
+   * as ArrayList<BigInteger>
    */
   @Override
   public ComputationResponse compute(ComputationRequest request) {
@@ -104,7 +101,7 @@ public class NetworkAPI implements NetworkApi {
       throw new IllegalArgumentException("Request cannot be null");
     }
     try {
-      // Load integers from input resource
+      // Load BigIntegers from input resource
       LoadResponse loadResp = readWrite.load(
           new LoadRequest(request.getInputResource(), request.getDelimiter()));
       if (loadResp.getStatus() != ApiStatus.SUCCESS) {
@@ -112,18 +109,17 @@ public class NetworkAPI implements NetworkApi {
             loadResp.getMessage());
       }
 
-      // expect the input integers to be in a List<Integer>, provided
-      // in LoadResponse
-      List<Integer> inputs = loadResp.getPayload();
-      List<Integer> results = new ArrayList<>();
+      // input list of BigInteger
+      List<BigInteger> inputs = loadResp.getPayload();
+      List<BigInteger> results = new ArrayList<>();
 
-      // Run computation for each input
-      for (int value : inputs) {
+      // Run computation for each BigInteger
+      for (BigInteger value : inputs) {
         results.add(compute.performComputation(value).getResult());
       }
 
       // Store results in output resource
-      List resultBatch = new ArrayList<>(results);
+      List<BigInteger> resultBatch = new ArrayList<>(results);
       StoreResponse storeResp = readWrite.store(new StoreRequest(
           request.getOutputResource(), resultBatch, request.getDelimiter()));
 
@@ -135,8 +131,7 @@ public class NetworkAPI implements NetworkApi {
         return new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(), msg);
       }
 
-      // return ComputationResponse to the user, results stored in a
-      // List
+      // return ComputationResponse to the user, results stored in a List
       return new ComputationResponse(ApiStatus.SUCCESS, resultBatch,
           "Computation completed");
 
@@ -162,7 +157,7 @@ public class NetworkAPI implements NetworkApi {
     return readWrite;
   }
 
-  public void setReadWrite(ProcessAPI readWrite) {
+  public void setReadWrite(ProcessApi readWrite) {
     this.readWrite = readWrite;
   }
 
@@ -182,25 +177,4 @@ public class NetworkAPI implements NetworkApi {
     this.resource = resource;
   }
 
-  /**
-   * These do not belong in the network api, just leaving them commented out
-   * incase i need this later.
-   * 
-   * @Override public StoreDataResponse storeData(StoreDataRequest req) {
-   * 
-   *           StoreResponse resp = readWrite.store(new
-   *           StoreRequest(req.getDestination(), req.getPayload(),
-   *           req.getDelimiter())); return new
-   *           StoreDataResponse(resp.getStatus(), req.getDestination(),
-   *           resp.getMessage());
-   * 
-   *           }
-   * 
-   * @Override public LoadDataResponse loadData(LoadDataRequest req) {
-   *           LoadResponse resp = readWrite .load(new
-   *           LoadRequest(req.getSource(), req.getDelimiter()));
-   * 
-   *           return new LoadDataResponse(resp.getStatus(), resp.getData(),
-   *           defaultDelimiter, resp.getMessage()); }
-   */
 }

@@ -2,8 +2,10 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,10 +38,10 @@ public class ComputeEngineIntegrationTest {
   @BeforeEach
   void setUp() {
     // Initialize input with [1, 10, 25]
-    inputConfig = new TestInputConfig(Arrays.asList(1, 10, 25));
+    inputConfig = new TestInputConfig(
+        Arrays.asList(BigInteger.ONE, BigInteger.TEN, BigInteger.valueOf(25)));
     outputConfig = new TestOutputConfig();
     dataStore = new InMemoryDataStore(inputConfig, outputConfig);
-
   }
 
   @Test
@@ -54,34 +56,29 @@ public class ComputeEngineIntegrationTest {
     LoadResponse loadResp = dataStore.loadData(loadReq);
 
     // Verify that loaded data matches inputConfig
-
-    List loadedData = loadResp.getPayload();
-    String result = (String) loadedData.get(0);
+    List<String> loadedData = loadResp.getPayload().stream()
+        .map(Object::toString).collect(Collectors.toList());
+    String result = loadedData.get(0);
 
     String expectedString = "1" + Delimiter.defaultDelimiter().getValue() + "10"
         + Delimiter.defaultDelimiter().getValue() + "25";
 
-    // this should pass, just checking we can correctly read data, I'm still not
-    // sure what the ConceptualAPI / computation section of compute engine will
-    // even do. May have to rework entire ConceptualAPI later, I had almsot no
-    // idea what its supposed to do
-
     assertEquals(expectedString, result);
 
     // Simulate storing processed data
+    // Convert outputConfig.getOutputData() from List<String> to
+    // List<BigInteger>
+    List<BigInteger> outputBigInts = outputConfig.getOutputData().stream()
+        .map(BigInteger::new).collect(Collectors.toList());
 
-    // create new resource using outputConfig
-    Resource<List<String>> outputSource = new Resource(ResourceType.CUSTOM,
-        dataStore.outputConfig.getOutputData());
+    Resource outputSource = new Resource(ResourceType.CUSTOM, outputBigInts);
 
     ComputationRequest compReq = new ComputationRequest(
         new Resource(ResourceType.CUSTOM, inputConfig.inputData), outputSource,
         Delimiter.defaultDelimiter());
     ComputationResponse compResp = net.compute(compReq);
 
-    // check the the result of running the computation on input 1 matches the
-    // expected result of running the computation on 1
-    assertEquals(compResp.getResults().get(0), 508141714);
-
+    // Check result of computation on first input
+    assertEquals(compResp.getResults().get(0).intValue(), 508141714);
   }
 }

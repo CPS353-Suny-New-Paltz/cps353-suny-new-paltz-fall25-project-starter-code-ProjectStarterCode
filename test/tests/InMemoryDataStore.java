@@ -1,5 +1,6 @@
 package tests;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,93 +15,66 @@ import shared.stuff.Resource;
 import shared.stuff.ResourceType;
 
 /**
- * A simple in-memory implementation of NetworkApi for testing, using
- * TestInputConfig and TestOutputConfig for storage
+ * A simple in-memory implementation of ProcessApi for testing. Works with
+ * BigInteger-based Resources and Load/Store responses.
  */
 public class InMemoryDataStore implements ProcessApi {
 
   TestOutputConfig outputConfig;
   Delimiter defaultDelimiter = Delimiter.defaultDelimiter();
-  Resource<List<Integer>> resource;
+  Resource resource;
 
   public InMemoryDataStore(TestInputConfig input, TestOutputConfig output) {
     this.outputConfig = output;
+    // input.inputData is List<BigInteger>
     this.resource = new Resource(ResourceType.CUSTOM, input.inputData);
   }
 
-  /**
-   * This function stores date in the TestOutputConfig specified in the users
-   * request. It splits the user provided data based on the specified delimiter
-   * or the default delimiter then adds it to TestOutputConfig as individual
-   * elements
-   */
   public StoreResponse storeData(StoreRequest req) {
+    Delimiter delimiter = req.getDelimiter() == null
+        ? defaultDelimiter
+        : req.getDelimiter();
 
-    Delimiter delimiter;
-    if (req.getDelimiter() == null) {
-      delimiter = defaultDelimiter;
-    } else {
-      delimiter = req.getDelimiter();
+    List<BigInteger> payload = req.getPayload();
+    if (payload == null) {
+      payload = new ArrayList<>();
     }
 
-    List<?> payloadStr = req.getPayload();
+    // Store data in the outputConfig as strings (for backward compatibility)
+    List<String> outputStrings = new ArrayList<>();
+    for (BigInteger b : payload) {
+      outputStrings.add(b.toString());
+    }
+    outputConfig.setOutputData(outputStrings);
 
-    // Clear old output and write new data
-    outputConfig.setOutputData(new java.util.ArrayList<>());
-
-    List<String> out = new TestOutputConfig().getOutputData();
+    // Also update internal Resource for consistency
+    resource.setData(new ArrayList<>(payload));
 
     return new StoreResponse(ApiStatus.SUCCESS, resource,
         "Data stored successfully");
   }
 
-  /**
-   * This function reads data, in this case from TestInputConfig which is stored
-   * in the resource field. It then separates each using the specified delimiter
-   * and returns it to the user as an array of bytes
-   */
   public LoadResponse loadData(LoadRequest req) {
+    Delimiter delimiter = req.getDelimiter() == null
+        ? defaultDelimiter
+        : req.getDelimiter();
 
-    Delimiter delimiter;
-    if (req.getDelimiter() == null) {
-      delimiter = defaultDelimiter;
-    } else {
-      delimiter = req.getDelimiter();
+    List<BigInteger> input = resource.getData();
+    if (input == null) {
+      input = new ArrayList<>();
     }
 
-    // our resources 'data' is the inputConfig
-    List input = resource.getData();
-
-    // read data from InputConfig, append the delimiter
-    StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < input.size(); i++) {
-      builder.append(input.get(i));
-      if (i < input.size() - 1) {
-        builder.append(delimiter.getValue());
-      }
-    }
-
-    // create byte array out of our string builder
-
-    List<String> data = new ArrayList<String>();
-    data.add(builder.toString());
-
-    // return the byte[], no resource is needed because we would read from user
-    // supplied resource
-    return new LoadResponse(ApiStatus.SUCCESS, data, delimiter,
-        "Data loaded successfully");
+    return new LoadResponse(ApiStatus.SUCCESS, new ArrayList<>(input),
+        delimiter, "Data loaded successfully");
   }
 
   @Override
   public LoadResponse load(LoadRequest request) {
-    // TODO Auto-generated method stub
-    return null;
+    return loadData(request);
   }
 
   @Override
   public StoreResponse store(StoreRequest request) {
-    // TODO Auto-generated method stub
-    return null;
+    return storeData(request);
   }
-
 }
