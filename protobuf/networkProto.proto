@@ -40,6 +40,30 @@ message ComputationResponse {
   optional string message = 3;
 }
 
+message LoginRequest {
+  required string username = 1;
+  required string hashed_password = 2;
+}
+
+message LoginResponse {
+  optional string session_token = 1;
+  optional string user_id = 2;
+  optional ApiStatus status = 3;
+  optional string message = 4;
+}
+
+message LogoutRequest {
+  required string session_token = 1;
+}
+
+message LogoutResponse {
+  optional ApiStatus status = 1;
+  optional string message = 2;
+}
+
 service NetworkService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+
   rpc Compute(ComputationRequest) returns (ComputationResponse);
 }

@@ -31,6 +31,35 @@ public class NetworkClient {
     NetworkServiceGrpc.NetworkServiceBlockingStub stub = NetworkServiceGrpc
         .newBlockingStub(channel);
 
+    // -- Login --
+    System.out.print("Enter username: ");
+    String username = scanner.nextLine().trim();
+
+    System.out.print("Enter password: ");
+    String password = scanner.nextLine().trim();
+
+    String hashedPassword = null;
+    try {
+      hashedPassword = shared.stuff.InitDatabase.hashPassword(password);
+    } catch (Exception e) {
+      System.err.println("Failed to hash password: " + e.getMessage());
+      System.exit(1);
+    }
+
+    NetworkProto.LoginRequest loginRequest = NetworkProto.LoginRequest
+        .newBuilder().setUsername(username).setHashedPassword(hashedPassword)
+        .build();
+
+    NetworkProto.LoginResponse loginResponse = stub.login(loginRequest);
+
+    if (loginResponse.getStatus() != NetworkProto.ApiStatus.SUCCESS) {
+      System.err.println("Login failed: " + loginResponse.getMessage());
+      System.exit(1);
+    }
+
+    System.out.println(
+        "Login successful. SessionToken: " + loginResponse.getSessionToken());
+
     // --- Input ---
     System.out.print("Input type? (1 = file, 2 = numbers): ");
     String choice = scanner.nextLine().trim();
@@ -54,10 +83,8 @@ public class NetworkClient {
     System.out.print("Enter output file path: ");
     String outputFile = scanner.nextLine();
 
-    System.out.print("Enter delimiter (optional, default ','): ");
+    System.out.print("Enter delimiter: ");
     String delim = scanner.nextLine();
-    if (delim.isEmpty())
-      delim = ",";
 
     // --- Build input resource ---
     NetworkProto.Resource inputResource;

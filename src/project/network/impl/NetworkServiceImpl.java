@@ -26,6 +26,64 @@ public class NetworkServiceImpl
   }
 
   @Override
+  public void login(NetworkProto.LoginRequest protoReq,
+      StreamObserver<NetworkProto.LoginResponse> responseObserver) {
+
+    try {
+      String username = protoReq.getUsername();
+      String hashedPassword = protoReq.getHashedPassword();
+
+      // Use NetworkAPI login method
+      network.api.LoginRequest loginReq = new network.api.LoginRequest(username,
+          hashedPassword);
+      network.api.LoginResponse loginResp = networkAPI.login(loginReq);
+
+      NetworkProto.LoginResponse.Builder respBuilder = NetworkProto.LoginResponse
+          .newBuilder();
+      respBuilder.setStatus(
+          NetworkProto.ApiStatus.valueOf(loginResp.getStatus().name()));
+      if (loginResp.getSessionToken() != null)
+        respBuilder.setSessionToken(loginResp.getSessionToken());
+      if (loginResp.getUserId() != null)
+        respBuilder.setUserId(loginResp.getUserId());
+      if (loginResp.getMessage() != null)
+        respBuilder.setMessage(loginResp.getMessage());
+
+      responseObserver.onNext(respBuilder.build());
+      responseObserver.onCompleted();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      responseObserver.onError(e);
+    }
+  }
+
+  @Override
+  public void logout(NetworkProto.LogoutRequest protoReq,
+      StreamObserver<NetworkProto.LogoutResponse> responseObserver) {
+
+    try {
+      network.api.LogoutRequest logoutReq = new network.api.LogoutRequest(
+          protoReq.getSessionToken());
+      network.api.LogoutResponse logoutResp = networkAPI.logout(logoutReq);
+
+      NetworkProto.LogoutResponse.Builder respBuilder = NetworkProto.LogoutResponse
+          .newBuilder();
+      respBuilder.setStatus(
+          NetworkProto.ApiStatus.valueOf(logoutResp.getStatus().name()));
+      if (logoutResp.getMessage() != null)
+        respBuilder.setMessage(logoutResp.getMessage());
+
+      responseObserver.onNext(respBuilder.build());
+      responseObserver.onCompleted();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      responseObserver.onError(e);
+    }
+  }
+
+  @Override
   public void compute(NetworkProto.ComputationRequest protoReq,
       StreamObserver<NetworkProto.ComputationResponse> responseObserver) {
 
@@ -79,10 +137,19 @@ public class NetworkServiceImpl
         }
       }
 
-      // --- Build domain request and compute ---
+      // --- Build domain request ---
       ComputationRequest domainReq = new ComputationRequest(inputResource,
           outputResource, delim);
-      ComputationResponse domainResp = networkAPI.compute(domainReq);
+
+      // --- Check login before compute ---
+      ComputationResponse domainResp;
+      if (networkAPI.getSessionToken() == null
+          || networkAPI.getLoggedInUserId() == null) {
+        domainResp = new ComputationResponse(ApiStatus.ERROR, new ArrayList<>(),
+            "User must be logged in to perform compute");
+      } else {
+        domainResp = networkAPI.compute(domainReq);
+      }
 
       // --- Build proto response ---
       NetworkProto.ComputationResponse.Builder respBuilder = NetworkProto.ComputationResponse
@@ -103,11 +170,9 @@ public class NetworkServiceImpl
       // Results
       List<BigInteger> results = domainResp.getResults();
       if (results != null) {
-        List<String> resultStrings = new ArrayList<>();
         for (BigInteger bi : results) {
-          resultStrings.add(bi.toString());
+          respBuilder.addResults(bi.toString());
         }
-        respBuilder.addAllResults(resultStrings);
       }
 
       // Message
