@@ -1,3 +1,11 @@
 # Software Engineering Project Starter Code
 
-This repo will start you off with an initial configuration that you'll modify as part of Checkpoint 1. As part of the modifications, you'll eventually delete the contents of this README and replace it with documentation for your project.
+I will be computing the largest prime number stictly smaller then the input of N 
+Example: N(1<N<Integer maximum value)
+
+Input = 10
+Output = 7
+
+
+
+![System Diagram](https://github.com/CPS353-Suny-New-Paltz/project-starter-code-AJSchoonmaker/blob/main/docs/IMG_6643.JPG?raw=true)
