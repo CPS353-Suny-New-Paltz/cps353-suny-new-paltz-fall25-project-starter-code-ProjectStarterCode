@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package project.grpc;
+
+option java_multiple_files = true;
+option java_package = "project.grpc";
+option java_outer_classname = "CoordinatorProto";
+
+service CoordinatorService {
+  rpc RunJob (RunJobRequest) returns (RunJobResponse);
+}
+
+message RunJobRequest {
+  repeated int32 inputs = 1;
+}
+
+message RunJobResponse {
+  string status = 1;
+  repeated string outputs = 2;
+}
