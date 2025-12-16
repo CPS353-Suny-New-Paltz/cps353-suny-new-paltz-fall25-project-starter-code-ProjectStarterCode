@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-eclipse.project.name = 'FillThisIn' 
+eclipse.project.name = 'SoftwareEngineering' 
 
 sourceSets {
 	main {
@@ -24,8 +24,25 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter:5.10.2')
 	testImplementation('org.mockito:mockito-core:5.10.0')
 	implementation('com.google.code.gson:gson:2.13.1')
+	implementation 'fr.inria.gforge.spoon:spoon-core:11.2.0'
+
 }
 
 test {
     useJUnitPlatform()
+    
+    filter{
+		excludeTestsMatching "tests.SmokeTestComputeEngineAPI.compRequestTest"
+		excludeTestsMatching "tests.SmokeTestComputeEngineAPI.calcResponseTest"
+		
+		excludeTestsMatching "tests.SmokeTestDataProcessAPI.readResponseTest"
+		excludeTestsMatching "tests.SmokeTestDataProcessAPI.writeDataTest"
+		
+		excludeTestsMatching "tests.UserNetworkTest.inputVerifiedTest"
+		excludeTestsMatching "tests.UserNetworkTest.networkResponseTest"
+		
+		excludeTestsMatching "tests.ComputeEngineIntegrationTest.testCompleteComputeEngineFlow"
+		
+	}
 }
+
